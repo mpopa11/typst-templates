@@ -6,6 +6,13 @@ RUN apt-get update && \
         sudo curl ca-certificates xz-utils git && \
     rm -rf /var/lib/apt/lists/*
 
+RUN apt-get update && \
+    echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections && \
+    apt-get install --no-install-recommends -y \
+        sudo curl ca-certificates xz-utils git \
+        ttf-mscorefonts-installer fontconfig && \
+    rm -rf /var/lib/apt/lists/*
+
 # Give the existing 'ubuntu' user sudo (optional: passwordless)
 RUN usermod -aG sudo ubuntu && \
     echo "ubuntu ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/ubuntu && \

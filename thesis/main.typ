@@ -212,7 +212,7 @@
 // ============================================================
 //  2. Fundament teoretic / Theoretical background
 // ============================================================
-
+#pagebreak()
 = 2. #t("ch_theory")
 
 #include "chapters/background.typ"
@@ -221,7 +221,7 @@
 // ============================================================
 //  3. Arhitectură / Architecture
 // ============================================================
-
+#pagebreak()
 = 3. #t("ch_arch")
 
 #include "chapters/architecture.typ"
@@ -230,7 +230,7 @@
 // ============================================================
 //  4. Implementare / Implementation
 // ============================================================
-
+#pagebreak()
 = 4. #t("ch_impl")
 
 #include "chapters/implementation.typ"
@@ -239,7 +239,7 @@
 // ============================================================
 //  5. Evaluare / Evaluation
 // ============================================================
-
+#pagebreak()
 = 5. #t("ch_eval")
 
 #include "chapters/evaluation.typ"
@@ -248,7 +248,7 @@
 // ============================================================
 //  6. Discuții / Discussion
 // ============================================================
-
+#pagebreak()
 = 6. #t("ch_discussion")
 
 #include "chapters/discussion.typ"
@@ -257,11 +257,10 @@
 // ============================================================
 //  7. Concluzii / Conclusions
 // ============================================================
-
+#pagebreak()
 = 7. #t("ch_conclusions")
 
 #include "chapters/conclusions.typ"
-
 
 // ============================================================
 //  Bibliografie / References
@@ -269,6 +268,7 @@
 //  we pass a localized title here.
 // ============================================================
 
+#pagebreak()
 #bibliography(
   "refs.bib",
   title: [#t("label_bibliography")],
@@ -280,6 +280,6 @@
 //  Anexe / Appendices
 // ============================================================
 
-= #t("label_appendices")
+// = #t("label_appendices")
 
-#include "chapters/appendices/appendix_1.typ"
+// #include "chapters/appendices/appendix_1.typ"

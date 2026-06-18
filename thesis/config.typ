@@ -9,15 +9,15 @@
 #let thesis_type = "bachelor"
 
 // Department: "cti" | "acse" | "aii"
-#let department  = "cti"
+#let department  = "aii"
 
 // Document language: "ro" | "en"
-#let language    = "en"
+#let language    = "ro"
 
 // Basic metadata
 #let thesis_title = "Titlu lucrare"
 #let supervisor   = "Ștefan-Dan Ciocîrlan"
-#let student      = "El Studento"
+#let student      = "Mihai Popa"
 #let year         = "2026"
 
 // Backwards-compatible aliases (for existing main.typ usage)
