@@ -55,9 +55,9 @@
 //         - Example (software):
 //               *[You may replace this comment with a figure showing the Scala library, test suite, benchmark module, and Jenkins pipeline.]*
 // 
-
+== 3.1 Soluție abstractă
 Este propusă o soluție de scan matching SLAM bazată pe utilizarea senzorilor de odometrie, IMU și LiDAR, destinată roboților autonomi care sunt folosiți în spații închise.
-Soluția este concepută ca o aplicație distribuită în ROS2, în care nodurile create îndeplinesc funcțiile unuia sau a mai multor module din aplicație.
+Soluția este concepută ca o aplicație distribuită în ROS 2, în care nodurile create îndeplinesc funcțiile unuia sau a mai multor module din aplicație.
 Sistemul propus este unul care se bazează mult mai mult pe componenta de front-end a unui sistem SLAM, fără o componentă de graph optimization sau închiderea buclelor.
 Componentele de optimizare a grafurilor și de închidere a buclelor au nevoie de resurse semnificative de procesare și de memorie, cost care crește pe măsură ce traiectoria crește și ea în lungime.
 Din acest motiv, aceste elemente nu au fost incluse în soluție, pentru a putea veni cu o variantă care să nu necesite prea multe resurse de la robotul pe care va fi utilizată soluția.
@@ -76,7 +76,11 @@ Partea de scan matching este de tip scan to map matching, și astfel se obține 
 
 Ulterior a fost adăugat un EKF pentru estimarea poziției, astfel încât prima predicție este cea calculată de EKF, nu cea rezultată din preluarea directă a datelor senzorilor.
 
-Fiecare componentă este membră a unui nod din ROS2 care implementează funcționalitățile necesare.
+#pagebreak()
+
+== 3.2 Comunicarea între componente
+
+Fiecare componentă este membră a unui nod din ROS 2 care implementează funcționalitățile necesare.
 
 Astfel, în soluție există un nod imu_odom care se ocupă cu preluarea primei predicții a poziției, fie folosind direct datele preluate de la senzori, fie preluând poziția estimată de EKF, care a fost adăugat ulterior.
 
@@ -119,5 +123,8 @@ Nodul care calculează metricile este metrics, iar acesta este abonat la topic-u
 
 Nu în ultimul rând, nodul /ground_truth preia poziția reală conform simulatorului și o publică mai departe sub forma unui mesaj de tip nav_msgs/Odometry.
 
-Acest stil de dezvoltare impus de un sistem bazat pe ROS2 duce la soluții modulare care pot fi modificate fără prea multe alte intervenții, în care nodurile pot fi înlocuite.
+Acest stil de dezvoltare impus de un sistem bazat pe ROS 2 duce la soluții modulare care pot fi modificate fără prea multe alte intervenții, în care nodurile pot fi înlocuite.
 Din această cauză, a fost creată și o versiune care are scopul de a analiza impactul estimării produse de către nodul EKF, comparativ cu datele brute obținute direct de la senzori.
+
+În capitolul următor va fi detaliat procesul de implementare și comportamentul detaliat al fiecărei componente prezentate anterior, pornind de la procesarea datelor, componenta de scan matching și actualizarea hărții.
+Pe lângă implementarea propriu zisă vor fi explicate problemele întâlnite pe parcurs, precum și soluțiile și compromisurile care au fost luate pe parcursul dezvoltării soluției.

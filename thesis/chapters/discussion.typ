@@ -87,3 +87,45 @@
   //              and provide a GitHub Action template for broader CI adoption."
 
 Soluția dezvoltată a înregistrat performanțe bune atât din punct de vedere structural cât și din perspectiva estimărilor traiectoriei.
+În urma evaluării, în toate mediile de simulare, cu ambele configurări ale soluției s-au înregistrat erori reduse, atât la nivel local, între pozițiile inregistrate, valoare RMSE RPE fiind, procentual, mai mici de 0.09% pentru ambele variante ale sistemului.
+Din punct de vedere global, potrivirea între traiectoriile estimate și referințe prezintă valori RMSE ATE mai mici de 0.1%.
+Analizând hărțile obținute se poate afirma faptul că ambele variante produc hărți corespunzătoare ale mediului în care se află robotul.
+
+Cel mai surprinzător rezultat este legat de impactul relativ scăzut pe care l-a avut componenta de EKF în performanța sistemului, cu referire la impactul asupra erorilor traiectoriilor estimate.
+În schimb, impactul este vizibil când se analizează hărțile rezultate și metricile structurale.
+Hărțile care folosesc o primă estimare realizată de EKF au pereți mai drepți, mai bine definiți.
+Nu apar distorsiuni la fel de pronunțate precum în cazul variantei mai simple, care se bazează direct pe datele primite de la senzorii robotului.
+
+Rezultatele au fost, bineînțeles, afectate de caracteristicile traiectoriilor și a  mediului în sine. 
+Lungimea unei traiectorii va influența negativ acuratețea din moment ce drift-ul acumulat de la măsurători se va aduna și în timp va afecta negativ performanța algoritmului.
+Această creștere a erorii este evidentă privind datele din @tbl:ate și @tbl:rpe, cu toate că este mai puțin pronunțată în cadrul local de la poziție la poziție.
+Se observă totuși în ambele cazuri un comportament la prima vedere ciudat pentru cea de-a doua traiectorie, ambele erori cresc ca valori semnificativ.
+
+Rotațiile sunt mult mai periculoase pentru acuratețea sistemului față de translațiile normale.
+Acest lucru se datoreaza faptului ca o eroare oricât de mică duce la distorsiuni foarte mari cu cât crește distanța.
+Acest lucru este exacerbat dacă rotațiile se petrec cu o viteză unghiulară mai mare.
+Specific soluției prezentate, rotațiile pure nu oferă foarte multe informații cu privire la translație.
+Astfel in urma scan matching-ului apar nealinieri care produc rezultate greșite, fie cu privire la orientare sau poate chiar la poziție. 
+Acest aspect a dus și la defectele prezentate de de hărțile celui de-al doilea mediu.
+Adaugarea unui EKF pare să fi ameliorat această problemă, dând o primă estimare mult mai adecvată și robustă față de datele brute.
+
+Cea mai mare limitare a sistemului este legată de lipsa unui back end care să permită și corecția traiectoriei din trecut.
+Decizia de a exclude aceasta componentă de detecție a buclelor și de optimizarea grafurilor a fost a fost luată pentru a aduce o soluție care prezintă o complexitate mai mică, pentru a putea fi rulată pe mai multe sisteme.
+Bineînțeles, această decizie a dus inevitabil la imposibilitatea de a corecta traiectoria pe parcursul explorării, deși abordarea de scan-to-map matching ajută la ameliorarea efectului.
+
+Alte limitări vizează mediul de testare din simulator.
+Un prim factor este reprezentat de faptul că hărțile nu au foarte multe zone care să nu aibe mult spațiu gol, în care robotul să nu poată să preia informații prin senzorul de LiDAR, ceea ce nu a testat suficient cazurile în care etapa de scan matching nu convergea, moment în care poziția estimată primea valoarea primei estimări.
+De asemenea, fiind vorba de un mediu simulat, senzorii nu prezentau un zgomot foarte realist pentru a putea analiza comportamentul într-o manieră mai apropiată de condițiile reale de funcționare.
+
+Pe viitor, o direcție firească de îmbunătățire a soluției este adăugarea unei modalități de detectare a buclelor și închiderea acestora.
+Aceasta modificare va ajuta la estiamrea mai bună a traiectoriei, mai ales pe termen lung, când acumularea drift-ului devine o problemă extraordinar de serioasă, care altfel aduce probleme semnificative soluției actuale.
+Această modificare va presupune o nevoie de mai multă putere de calcul și mult mai multă memorie pentru a putea rula o metodă care integrează pe lângă soluția deja prezentată și o componentă de optimizarea grafurilor.
+Din această cauză, optimizarea soluției actuale este, de asemenea, o altă direcție de dezvoltare.
+O posibilă problemă viitoare este reprezentată de faptul că soluția bazată pe simpla aplicare a algoritmului lui Bresenham pentru trasarea liniilor libere nu este cea mai eficientă când vorbim despre o variantă care necesită mai multă putere de calcul.
+Aceasta paote fi înlocuită sau măcar calculul poate fi vectorizat pentru a eficientiza această etapă și de a nu crea blocaje în sistem.
+De asemenea, în cazul în care se implementează o componentă de detecție și închidere a buclelor, va trebui analizat impactul real al celor 2 treceri prin scan-matching pentru a corecta reduce distorsiunile provenite de la senzorul de LiDAR. 
+Această componentă poate deveni redundantă într-un astfel de sistem și este posibil să reprezintă o execuție în plus care doar consumă resurse fără un câștig prea mare.
+
+Altă direcție care poate fi explorată este paralelizarea unor componente, pentru obținerea unor performanțe mai bune in timp real. 
+În acest fel, soluția va răspunde mai bine la medii mai mari, cu mai multe trăsături și traiectorii complexe.
+Componenta de scan matching este potrivită pentru paralelizare, fiind relativ izolată de celelalte componente și in aceasta nu se riscă apariția unor probleme de sincronizare care să duca la rezultate eronate.

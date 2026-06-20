@@ -79,7 +79,9 @@ Pe lângă aceste metrici, a fost ales și studiul impactului introducerii unui 
     [ROS 2], [Jazzy Jalisco],
     [Simulator], [Gazebo Harmonic],
     [Python], [3.12.3],
-    [Evo], [1.36.5]
+    [Evo], [1.36.5],
+    [OpenCV], [4.6.0],
+    [NumPy], [1.26.4]
   ),
   caption: ["Specificațiile sistemului pe care au fost realizate experimentele"]
 ) <tbl:setup>
@@ -201,12 +203,43 @@ Astfel, introducerea unui EKF vine cu rezultate inconcludente cu privire la efec
 La nivel local (@tbl:rpe) ajută minimal în cazul unor traiectorii scurte (pe harta World).
 În cazul unor traiectorii mai lungi pare să aibă cel mai bun efect, însă erorile tind să crească pe măsură ce lungimea traiectoriei crește.
 
-#grid(
-  columns: 2,
-  gutter: 1cm,
+// #grid(
+//   columns: 2,
+//   gutter: 1cm,
 
-  [
-    #figure(
+//   [
+//     #figure(
+//       table(
+//         columns: 3,
+//         align: center,
+
+//         [*Environment*], [*Fără EKF*], [*EKF*],
+//         [World], [0.022820], [0.023064],
+//         [House], [0.048605], [0.040132],
+//         [Amazon House], [0.027761], [0.029875],
+//       ),
+//       caption: [RPE RMSE (m) pentru fiecare hartă]
+//     ) <tbl:rpe>
+//   ],
+
+//   [
+//     #figure(
+//       table(
+//         columns: 3,
+//         align: center,
+
+//         [*Environment*], [*Fără EKF*], [*EKF*],
+
+//         [World], [0.019572], [0.017394],
+//         [House], [0.147214], [0.100453],
+//         [Amazon House], [0.042731], [0.054339],
+//       ),
+//       caption: [ATE RMSE (m) pentru fiecare hartă]
+//     ) <tbl:ate>
+//   ]
+// )
+
+#figure(
       table(
         columns: 3,
         align: center,
@@ -218,10 +251,8 @@ La nivel local (@tbl:rpe) ajută minimal în cazul unor traiectorii scurte (pe h
       ),
       caption: [RPE RMSE (m) pentru fiecare hartă]
     ) <tbl:rpe>
-  ],
 
-  [
-    #figure(
+#figure(
       table(
         columns: 3,
         align: center,
@@ -234,8 +265,6 @@ La nivel local (@tbl:rpe) ajută minimal în cazul unor traiectorii scurte (pe h
       ),
       caption: [ATE RMSE (m) pentru fiecare hartă]
     ) <tbl:ate>
-  ]
-)
 
 La nivel global (@tbl:ate), tendința este asemănătoare, însă erorile au valori mai mari, ceea ce este de așteptat, considerând că nu există o componentă de detectare și închidere a buclelor.
 Se observă că erorile scad pentru configurația cu EKF pentru primele două traiectorii, cea scurtă și cea medie.

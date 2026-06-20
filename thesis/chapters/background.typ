@@ -54,7 +54,7 @@
 //    Replace each block below (the text between _[ and ]_) with your own paragraph(s) following the order above.
 
 // În contextul în care automatizarea reprezintă tendința dominantă a ultimilor ani, integrarea roboților autonomi devine o nevoie din ce în ce mai mare pentru diferite zone de activitate atât în industrie cât și în viața de zi cu zi a oamenilor. Astfel, oamenii se comfrontă cu tot felul de roboți de acest tip din ce în ce mai mult
-//== 2.1 Context
+== 2.1 Context
 Un robot autonom reprezintă un sistem capabil să ia decizii, pe baza observațiilor din mediul în care se află în vederea îndeplinirii unor sarcini.
 Față de sistemele autonome clasice, care execută sarcini stabilite încă din faza de proiectare, roboții autonomi trebuie să fie capabili să ia decizii singuri, în baza observațiilor din mediu.
 În acest context, se remarcă roboții mobili care reprezintă obiectul acestei lucrări, apare și problematica unui mediu care nu este fix. 
@@ -169,7 +169,7 @@ Considerând faptul că măsurătorile sunt modelate folosind zgomotul Gaussian,
 Se caută valorile variabilelor pentru care suma erorilor pătratice este minimizată.
 Din cauza caracterului bipartit și a faptului că fiecare factor depinde doar de un mic număr de variabile, rezolvarea problemei este eficientă chiar și pentru cele mai lungi traiectorii. @sh-ch1-fg4slam
 
-//== 2.2 Probleme
+== 2.2 Probleme
 
 Cu acestea fiind spuse, problema fundamentală a unui sistem SLAM este reprezentată de estimarea corectă a poziției robotului, folosind datele furnizate de către senzori, în același timp în care se construiește harta mediului înconjurător.
 Aceste două părți ale problemei fundamentale sunt dependente una de cealaltă.
@@ -194,7 +194,7 @@ Datele sunt preluate in același timp in care robotul se deplasează, astfel fas
 Acest efect este mult mai pronunțat în momentul in care vitezele de deplasare și rotație sunt mai mari.
 Pentru a evita această problema, trebuie un introdus un pas inainte de etapa de scan-matching care să compenseze pentru mișcarea din timpul scanării pentru a corecta pozițiile obstacolelor lovite de către fasciculele emise.
 
-//== 2.3 Soluții alternative
+== 2.3 Soluții alternative
 
 Gmapping descris în detaliu în @gmapping este cea mai veche metodă care va fi prezentată în această secțiune.
 Din punct de vedere al senzorilor, este necesar un senzor LiDAR precum și o sursă de odometrie a roților.
@@ -251,16 +251,16 @@ Vine cu mai multe moduri de utilizare: unul asincron care este conceput pentru a
 Pentru a realiza ultimul mod, se folosește un buffer rotativ care menține măsurătorile curente, care sunt adăugate grafului permanent, în forma unor noi constrângeri și poziții. 
 La îndepărtare aceste măsurători sunt eliminate, graful revenind la forma originală, salvată precedent.
 
-//== 2.4 Tehnologii folosite
+== 2.4 Tehnologii folosite
 
-ROS2 este, la momentul actual, una dintre cele mai folosite platforme pentru dezvoltarea aplicațiilor de robotică, în special cele din zona de open-source.
-ROS2 are o structură descentralizată bazată pe Data Distribution Service (DDS) și o arhitectură de tip peer to peer.
-În acest mod, componentele unui sistem dezvoltat în ROS2 pot acționa complet independent unul față de celălalt.
+ROS 2 este, la momentul actual, una dintre cele mai folosite platforme pentru dezvoltarea aplicațiilor de robotică, în special cele din zona de open-source.
+ROS 2 are o structură descentralizată bazată pe Data Distribution Service (DDS) și o arhitectură de tip peer to peer.
+În acest mod, componentele unui sistem dezvoltat în ROS 2 pot acționa complet independent unul față de celălalt.
 Comunicarea este realizată cu ajutorul a trei tipuri de comunicare: topic, service și action. @ros2
 Topic-urile sunt cele mai folosite și au un comportament de tip subscriber-publisher.
 Service-urile sunt un mecanism de tip request-reply, iar action-urile sunt orientate spre rezultat, și oferă feedback constant.
 
-Într-un sistem dezvoltat pe ROS2 există trei sisteme de referință importante pentru localizare în cadrul roboților autonomi.
+Într-un sistem dezvoltat pe ROS 2 există trei sisteme de referință importante pentru localizare în cadrul roboților autonomi.
 Primul dintre acestea base_link, care este atașat bazei robotului, și poate fi văzut ca fiind un cadru local.
 Celelalte două sunt sisteme de referință globale, odom și map.
 Poziția unui robot în cadrul odom trebuie să fie mereu continuă, motiv pentru care acesta va suferi de drift-uri ale poziții, adică estimarea poziției robotului va acumula erori.
@@ -294,13 +294,38 @@ Algoritmul devine mai rezistent la zgomot și oferă rezultate mai precise. @gic
 Aceste puncte pot fi aduse în sistemul de referință a robotului după formulele:
 
 $
-x_i = r_i * cos(theta_i)\
-y_i = r_i * sin(theta_i)
+x_i = r_i dot cos(theta_i)\
+y_i = r_i dot sin(theta_i)
 $ <eq:point_cloud>
 unde:
 
 - $r_i$ este distanța la care s-a observat un obstacol
 - $theta_i$ este unghiul la care s-a observat obstacolul
+
+Totuși, un senzor LiDAR nu achiziționează datele în același moment de timp, ci măsoară distanțele pe parcursul unei rotații complete, intr-un interval de timp.
+Din această cauză, dacă robotul se deplasează, fasciculele trimise vor fi capturate dintr-o poziție și orientare deplasate față de locația originală. @Zhang-RSS-14
+Dacă punctele sunt tratate ca și când au fost măsurate in același timp, atunci setul de puncte va fi puțin distorsionat de mișcarea robotului, lucru care va duce la hărți mai puțin precise și care nu corespund in totalitate cu realitatea.
+O metodă folosită pentru eliminarea distorsiunii este interpolarea liniară de poziții. @Zhang-RSS-14
+
+Pentru a corecta distorsiunea, fiecărui fascilul îi este asociat momentul de timp de achiziție $t_i$.
+Poziția se poate obține prin interpolarea liniară între cele două estimări, de la momentele de timp $t_a$ și $t_b$, momentele de timp estimării de dinaintea fascilului și a celei de după: 
+$
+x_i = x_a + alpha (x_b - x_a), \
+y_i = y_a + alpha (y_b - y_a), \
+theta_i = theta_a + alpha thin Delta theta
+$ <eq:deskew-interp>
+
+unde:
+
+- $alpha = (t_i - t_a) \/ (t_b - t_a)$ este factorul de interpolare
+- $Delta theta = "atan2"(sin(theta_b - theta_a), cos(theta_b - theta_a))$ este diferența unghiulară
+
+Având poziția fiecărui fascicul, punctele se pot readuce în același sistem de coordonate prin:
+$ p_i^"corectat" = H(t_"ref")^(-1) H(t_i) p_i $ <eq:deskew>
+
+unde:
+- $H(t_i)$ este transformarea corespunzătoare poziției din momentul $t_i$,
+- $H(t_"ref")$ cea de la momentul de referință.
 
 Având punctele unde se află obstacolele, se poate folosi o tehnică ray casting pentru a trasa o linie până la acel punct, care reprezintă celulele goale.
 Pentru aceasta s-a ales algoritmul lui Bresenham.
@@ -336,6 +361,7 @@ unde:
  - 0 dacă celula este detectată ca fiind liberă
  - 100 dacă celula este detectată ca fiind ocupată
 
+== 2.5 Metodologie de evaluare
 
 Pentru a evalua rezultatele obținute vor fi analizate atât traiectoria obținută în urma componentei de localizare cât și calitatea hărților generate.
 În cadrul fiecărei hărți, pentru fiecare versiune a soluției au fost salvate atât hărțile rezolvate, cât și pozițiile estimate (împreună cu ground truth din Gazebo) în ROS Bag-uri pentru a putea fi testate ulterior.
@@ -397,3 +423,5 @@ Proporția se referă la procentul de celule ocupate din hartă.
 Între 2 hărți ale aceluiași mediu, cea cu o proporție mai mare de celule ocupate va fi de o calitate mai scăzută deoarece obstacolele detectate vor fi mai groase pe hartă, semn că au existat fluctuații cu privire la poziția robotului.
 Similar, o hartă cu mai multe colțuri va fi probabil de o calitate mai mică deoarece acele colțuri suplimentare au fost probabil rezultatul unor artefacte din procesul de cartografiere.
 În final, o hartă cu mai multe spații închise va fi, de asemenea, cel mai probabil de o calitate mai mică deoarece acele spații detectate pot fi cauzate de erori de orientare sau poziționare sau chiar închideri deficitare de bucle. @benchmark2017
+Pentru implementarea acestei componente a fost folosită biblioteca OpenCV @opencv_library care pune la dispoziție implementări consacrate ale operațiilor descrise în @benchmark2017 pentru o efieciență maximă.
+Aceastea se aplică hărții obținute care este după tratată ca o imagine și se pot extrage trăsăturile dorite din aceasa.
