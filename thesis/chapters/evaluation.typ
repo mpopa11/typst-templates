@@ -53,19 +53,19 @@
 
 == 5.1 Structura experimentului
 Evaluarea soluției se realizează prin evaluarea a celor două componente principale ale oricărei soluții de SLAM: localizarea și cartografierea.
-În alte cuvinte, o soluție bună trebuie să fie capabilă să urmărească traiectoria reală cât mai bine și să construiască hărți de calitate care să repezinte cât mai fidel posibil mediul de lucru al robotului.
+În alte cuvinte, o soluție bună trebuie să fie capabilă să urmărească traiectoria reală cât mai bine și să construiască hărți de calitate care să reprezinte cât mai fidel posibil mediul de lucru al robotului.
 Din aceste considerente au fost folosite metricile discutate anterior în lucrare, anume valorile RMSE ale RPE (@eq:rpe-rmse) și ATE (@eq:ate-rmse).
 Calitatea hărților rezultate este măsurată folosind metricele de proporție, numărul de colțuri din hartă și numărul de spații închise.
 
 Pentru evaluarea traiectoriei este necesară și existența unei traiectorii reale, față de care să se facă comparațiile între acestea.
 
-Pentru a avea un mediu controlat în care se poată se poată obține și traiectoriile reale, testarea soluției a fost făcută în cadrul simulatorului Gazebo pentru a putea înregistra secvența de mesaje cu poziția reală, de referință precum și estimarea, sau datele obținute de la senzori.
-Astfel, experimentul poate fi recreat pe același set de date, indifernet de schimbările eventuale aduse oricărei componente a sistemului.
-Acestea au fost înregistrate sunt forma unor ROS Bags.
+Pentru a avea un mediu controlat în care să se poată obține și traiectoriile reale, testarea soluției a fost făcută în cadrul simulatorului Gazebo pentru a putea înregistra secvența de mesaje cu poziția reală, de referință precum și estimarea, sau datele obținute de la senzori.
+Astfel, experimentul poate fi recreat pe același set de date, indiferent de schimbările eventuale aduse oricărei componente a sistemului.
+Acestea au fost înregistrate sub forma unor ROS Bags.
 
 Pe lângă aceste metrici, a fost ales și studiul impactului introducerii unui EKF, care fuzionează datele provenite de la odometria roților și IMU, față de o soluție bazată pur pe scan matching.
 
-În @tbl:setup sunt trecute specificațiile sistemului  pe care au fost realizate experimentele, precum și veriunile tehnologiilor importante.
+În @tbl:setup sunt trecute specificațiile sistemului pe care au fost realizate experimentele, precum și versiunile tehnologiilor importante.
 
 #figure(
   table(
@@ -87,21 +87,21 @@ Pe lângă aceste metrici, a fost ales și studiul impactului introducerii unui 
 ) <tbl:setup>
 
 Cu aceste considerente, experimentele au fost realizate în Gazebo, fiind folosit robotul TurtleBot3 Burger.
-Au fost alese pentru testare trei hărți, care oferaă posibilitatea unei testări progresive a capacităților soluției elaborate.
+Au fost alese pentru testare trei hărți, care oferă posibilitatea unei testări progresive a capacităților soluției elaborate.
 Două dintre acestea au fost preluate din pachetul corespunzător robotului TurtleBot3, anume harta World (@fig:world-maps a) și harta House (@fig:house-maps a).
 
 De asemenea a fost preluată și o hartă dezvoltată pentru o versiune mai veche de Gazebo și pentru integrare cu ROS1, anume AWS RoboMaker Small House World #footnote[Disponibil în cadrul repository-ului AWS RoboMaker Small House World:
   https://github.com/aws-robotics/aws-robomaker-small-house-world
 ] (@fig:amazon-maps a)
 
-Prima hartă reprezintă un mediu cu o complexitate mică, închis, de mici dimensiuni cu daoar câteva obstacole.
-Prima hartă are asociată o traiectorie scurtă, de aproximativ 26 m, și validează funcționalitea de bază pentru o posibilă soluție.
+Prima hartă reprezintă un mediu cu o complexitate mică, închis, de mici dimensiuni cu doar câteva obstacole.
+Prima hartă are asociată o traiectorie scurtă, de aproximativ 26 m, și validează funcționalitatea de bază pentru o posibilă soluție.
 
-A doua hartă reprezintă o casă de dimensiuni mai mici, fară multe obstacole în interior, cu excepția unor mese, a unor rafturi și a unor coșuri.
-Îi este asociată o traiectorie mai complexă, de aproximativ 87 m, care vizitează toate camerele și introduce problema impusa de trecerea dintr-o cameră în alta, adică în zone care nu se pot compara prea bine cu harta deja înregistrată.
+A doua hartă reprezintă o casă de dimensiuni mai mici, fără multe obstacole în interior, cu excepția unor mese, a unor rafturi și a unor coșuri.
+Îi este asociată o traiectorie mai complexă, de aproximativ 87 m, care vizitează toate camerele și introduce problema impusă de trecerea dintr-o cameră în alta, adică în zone care nu se pot compara prea bine cu harta deja înregistrată.
 
-Nu în ultimul rând, a treia hartă reprezintă cel mai complex mediu, practic este un apartament cu mai mai multe camere, de dimensiuni mai mari, cu mult mai multe alte obstacole, care permite o traiectorie mai lungă, de aproximativ 108 m , dar un timp de funcționare mai mare, pe parcursul procesului de cartografiere, care permite în plus și observarea acumulării drift-ului.
-Din considerente de performanță în mediul de simulare Gazebo, au fost elimite unele texturi, umbe și obiecte care nu influențează harta rezultată.
+Nu în ultimul rând, a treia hartă reprezintă cel mai complex mediu, practic este un apartament cu mai multe camere, de dimensiuni mai mari, cu mult mai multe alte obstacole, care permite o traiectorie mai lungă, de aproximativ 108 m, dar un timp de funcționare mai mare, pe parcursul procesului de cartografiere, care permite în plus și observarea acumulării drift-ului.
+Din considerente de performanță în mediul de simulare Gazebo, au fost eliminate unele texturi, umbre și obiecte care nu influențează harta rezultată.
 == 5.2 Rezultate
 
 În @fig:world-traj sunt prezentate traiectoriile înregistrate de către cele două configurări ale sistemului, comparate cu traiectoria referință.
@@ -116,7 +116,7 @@ Acest lucru era un rezultat de așteptat, fiind vorba de un mediu prea mic, care
     [
       #align(center)[
         #image("../figures/tb3_world_no_ekf_trajectories.png", 
-        height: 7cm)
+        height: 5cm)
         #v(0.2em)
         (a) Configurația fără EKF
       ]
@@ -124,7 +124,7 @@ Acest lucru era un rezultat de așteptat, fiind vorba de un mediu prea mic, care
 
     [
       #align(center)[
-        #image("../figures/tb3_world_ekf_trajectories.png", height: 7cm)
+        #image("../figures/tb3_world_ekf_trajectories.png", height: 5cm)
         #v(0.2em)
         (b) Configurația cu EKF
       ]
@@ -135,9 +135,9 @@ Acest lucru era un rezultat de așteptat, fiind vorba de un mediu prea mic, care
   ]
 ) <fig:world-traj>
 
-în @fig:house-traj sunt expuse traiectoriile pentru cea de-a doua hartă. 
-În cazul acesteia, se observa anumtie devieri de la referință, în ambele configurări.
-Totuși a doua configurație, cea cu EKF, prezintă o potrivire mai bună, mai ales in partea de dreapta și mijloc ilustrației, precum și în spre finalul traiectoriei, unde drift-ul total se ameliorează.
+În @fig:house-traj sunt expuse traiectoriile pentru cea de-a doua hartă.
+În cazul acesteia, se observă anumite devieri de la referință, în ambele configurări.
+Totuși a doua configurație, cea cu EKF, prezintă o potrivire mai bună, mai ales în partea dreaptă și la mijlocul ilustrației, precum și spre finalul traiectoriei, unde drift-ul total se ameliorează.
 
 #figure(
   grid(
@@ -165,9 +165,9 @@ Totuși a doua configurație, cea cu EKF, prezintă o potrivire mai bună, mai a
   ]
 ) <fig:house-traj>
 
-Nu în ultimul rând, în @fig:amazon-traj sunt prezentate traiectoriile în cea de-a treia hartă care performanțele sunt bune în ambele cazuri, cu câteva excepții.
+Nu în ultimul rând, în @fig:amazon-traj sunt prezentate traiectoriile în cea de-a treia hartă, în care performanțele sunt bune în ambele cazuri, cu câteva excepții.
 Totuși pentru prima oară se observă o potrivire puțin mai proastă în cazul configurării cu un EKF.
-În schimb, se observă ca problema drift-ului nu este la fel de accentuată spre finalul traiectoriei, ceea ce sugerează că etapa de scna matching are o influență mult mai mare pentru reducerea acestuia, mai ales pe măsură ce se construiește o hartă mai detaliată.
+În schimb, se observă ca problema drift-ului nu este la fel de accentuată spre finalul traiectoriei, ceea ce sugerează că etapa de scan matching are o influență mult mai mare pentru reducerea acestuia, mai ales pe măsură ce se construiește o hartă mai detaliată.
 
 #figure(
   grid(
@@ -196,7 +196,7 @@ Totuși pentru prima oară se observă o potrivire puțin mai proastă în cazul
 ) <fig:amazon-traj>
 
 În @tbl:rpe și @tbl:ate se găsesc valorile RMSE pentru RPE și respectiv ATE.
-RPE evaluează potrivirea pe termen scurt, și măsoară drift-ul între poziții consecutive, în timp ce ATE are caracter global și cunatifică corectitudinea traiectoriei pe întreaga traiectorie.
+RPE evaluează potrivirea pe termen scurt, și măsoară drift-ul între poziții consecutive, în timp ce ATE are caracter global și cuantifică corectitudinea pe întreaga traiectorie.
 Rezultatele conturează o concluzie care începea să se formeze încă din analiza graficelor cu traiectoriile comparate.
 
 Astfel, introducerea unui EKF vine cu rezultate inconcludente cu privire la efectul real al acestuia.
@@ -288,7 +288,7 @@ Cu toate acestea, pentru traiectoria cea mai lungă, rezultatele sunt mai proast
     [House fără EKF], [0.0362], [83], [5],
     [House cu EKF], [0.0364], [81], [1],
 
-    [Amazon House fără EKF], [0,0304], [123], [2],
+    [Amazon House fără EKF], [0.0304], [123], [2],
     [Amazon House cu EKF], [0.0302], [109], [1],
   ),
   caption: [
@@ -349,17 +349,17 @@ Pe de altă parte, proporția de celule ocupate este considerabil mai mică comp
   ]
 )<fig:world-maps>
 
-În cazul celei de-a doua hărți (@fig:house-maps) se observă ca diferențele între numărul de colțuri și proporția de celule ocupate este neglijabilă.
+În cazul celei de-a doua hărți (@fig:house-maps) se observă că diferențele între numărul de colțuri și proporția de celule ocupate sunt neglijabile.
 Diferența majoră între rezultate este numărul de spații închise.
-Acestea sunt rezultate în urma artefacterlor produse între ziduri, ceea ce duce la creare unor spații închise de mici dimenisuni.
+Acestea sunt rezultate în urma artefactelor produse între ziduri, ceea ce duce la crearea unor spații închise de mici dimensiuni.
 
-Acest lucru din nou sugerează din nou, o instabilitate a poziției estimate în cadrul primei configurări, care duce la acele artefacte în jurul pereților.
-Însă cea mai mare problema cu rezulatele obținute în cadrul acestei traiectorii, este, fără îndoială  distorsiunea clară prezentă în partea de jos a hărții.
+Acest lucru sugerează din nou o instabilitate a poziției estimate în cadrul primei configurări, care duce la acele artefacte în jurul pereților.
+Însă cea mai mare problemă cu rezultatele obținute în cadrul acestei traiectorii este, fără îndoială, distorsiunea clară prezentă în partea de jos a hărții.
 Aceasta este prezentă în ambele configurații, însă este mult mai pronunțată, în cazul primei configurări.
-În cazul primei, se observă cum peretele ultimei camere este deplasat și nu se suprapune cu linia trasă din exteriorul casei, din zona de unde a inceput traiectoria robotului.
+În cazul primei, se observă cum peretele ultimei camere este deplasat și nu se suprapune cu linia trasă din exteriorul casei, din zona de unde a început traiectoria robotului.
 Astfel rezultă și un nou spațiu închis care nu ar fi trebuit să fie prezent în mod normal.
-Se observa mai multe artefacte în jurul întrării camerei de jos față de varianta cu EKF.
-În schimb, varianta cu EKF a produs niște celule ocupate care nu se află în realitate, cel mai probabil râmase de dinainte ca orientarea robotului să fie supracompensată din cauza driftului, ceea ce a dus la distorsiunea prezentă.
+Se observă mai multe artefacte în jurul intrării camerei de jos față de varianta cu EKF.
+În schimb, varianta cu EKF a produs niște celule ocupate care nu se află în realitate, cel mai probabil rămase de dinainte ca orientarea robotului să fie supracompensată din cauza driftului, ceea ce a dus la distorsiunea prezentă.
 
 #figure(
   [
@@ -404,10 +404,10 @@ Se observa mai multe artefacte în jurul întrării camerei de jos față de var
   ]
 )<fig:house-maps>
 
-Nu în ultimul rând, pentru ultima hartă analizată (@fig:amazon-maps) se observă o diferență semnificativă cu privire la numărul de colțuri se observă o mare diferență între cele două variante.
+Nu în ultimul rând, pentru ultima hartă analizată (@fig:amazon-maps) se observă o diferență semnificativă cu privire la numărul de colțuri între cele două variante.
 Într-adevăr, se observă vizual faptul că pereții par să fie reprezentați mai groși în prima configurație, ceea ce ar explica apariția unor mai multe colțuri.
 
-O altă probleme, deși de data aceasta mai subtilă este reprezentată de o distorsiune a hărții, în partea stângă a acesteia.
+O altă problemă, deși de data aceasta mai subtilă, este reprezentată de o distorsiune a hărții, în partea stângă a acesteia.
 Varianta cu EKF reușește să producă o hartă care ilustrează mai bine mediul înconjurător în acest caz.
 
 Per total, considerând toate rezultatele obținute, atât legate de metricile structurale, cât și cele legate de traiectoriile estimate, cât și, poate cel mai important, hărțile rezultate, se pot trage anumite concluzii unele așteptate, altele mai puțin așteptate.
@@ -456,9 +456,9 @@ Per total, considerând toate rezultatele obținute, atât legate de metricile s
   ]
 )<fig:amazon-maps>
 
-În primul rând, erorile obținute, la nivel global, la momentul potrivirii traiectoriei estimate cu cea reală sunt semnficativ de mici: între 1.7-1.9 cm pentru o traiectorie de 26 m, 10-14 cm pentru o traiectorie de 87 m și 4.2-5.4 cm la o traiectorie de 108m.
+În primul rând, erorile obținute, la nivel global, la momentul potrivirii traiectoriei estimate cu cea reală sunt semnificativ de mici: între 1.7-1.9 cm pentru o traiectorie de 26 m, 10-14 cm pentru o traiectorie de 87 m și 4.2-5.4 cm la o traiectorie de 108m.
 Aceste rezultate sunt impresionante, indicând o ameliorare bună a drift-ului.
-Erorile locale sunt între 2 și 5 cm indiferent de traiectorie și configurație, ceea ce înseamna erori de sub 0.1%.
+Erorile locale sunt între 2 și 5 cm indiferent de traiectorie și configurație, ceea ce înseamnă erori de sub 0.1%.
 
 Totuși un efect neașteptat este faptul că introducerea unui nod EKF pentru estimarea poziției nu a venit cu avantaje considerabile în majoritatea cazurilor, fiind diferențe de sub un centimetru pentru majoritatea traiectoriilor testate.
 Acest lucru indică faptul că componenta de scan matching are caracter dominant în cadrul sistemului.

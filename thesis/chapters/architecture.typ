@@ -110,7 +110,7 @@ Topic-ul /imu transmite datele obținute de la unitatea inerțială care conțin
 Acestea sunt folosite de nodul de EKF /ekf_filter_node, care apoi transmite pe topic-ul /odometry/filtered prima estimare a poziției, tot sub formă de mesaj nav_msgs/Odometry.
 Aceasta este preluată de alt nod, /imu_odom care trimite un mesaj simplu care conține poziția și orientarea, yaw, pe topic-ul /robot_data.
 
-De la /scan se preiau datele de LiDAR oferite sub forma unui mesaj de tip sensor_msgs/LaserScan, din care, de interes sunt câmpurile de ranges, care  mențin un șir al distanțelor reperate, precum și limitele de detecție ale senzorului, incrementele de unghi și timp.
+De la /scan se preiau datele de LiDAR oferite sub forma unui mesaj de tip sensor_msgs/LaserScan, din care, de interes sunt câmpurile de ranges, care mențin un șir al distanțelor reperate, precum și limitele de detecție ale senzorului, incrementele de unghi și timp.
 
 #figure(
   image("../figures/communications.png", height: 14cm),

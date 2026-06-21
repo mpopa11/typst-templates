@@ -158,7 +158,7 @@ Modelul propune ca nodurile grafului să fie asociate cu inele metalice, în tim
 Pe măsură ce se obțin noi măsurători, se adaugă un nou inel, care este ulterior conectat cu un resort de inelul precedent.
 Din moment ce măsurătorile nu sunt perfecte, nici resorturile nu vor fi perfect și vor conține erori, astfel lanțul va devia de la adevărul fizic.
 Dacă robotul se intoarce într-un loc deja vizitat, un inel precedent, se adaugă un nou resort, între inelul vizitat și inelul curent.
-Din cauza erorilor acumulate, resortul va fi întins la maxim, ceea ce va face ca fiecare inel din buclă să se miște pentru a echilibra sistemul la o stare de energie minimă, practic eliminând erorile de măsurare de până în acel moment.
+Din cauza erorilor acumulate, resortul va fi întins la maxim, ceea ce va face ca fiecare inel din buclă să se miște pentru a echilibra sistemul la o stare de energie minimă, practic eliminând erorile de măsurare de până în acel moment. @Thrun2008
 
 O variantă foarte folosită a acestui tip de sistem este cel bazat pe grafurile de factori (factor graphs). @sh-ch1-fg4slam
 În cazul acestor grafuri, există mai multe tipuri de noduri: variabilele, care reprezintă ceea ce dorim să aflam, de exemplu pozițiile robotului, și, factorii, constrângerile observate pe traiectorie.
@@ -178,38 +178,38 @@ Astfel, pentru o estimare cât mai bună a poziției este nevoie de o hartă cor
 Din această cauză, s-au dezvoltat mai multe modalități de a rezolva problema impusă de SLAM, unele dintre care au fost descrise anterior.
 În continuare, vor fi dezvoltate problemele uzuale, precum și unele metode de a gestiona aceste probleme, întâlnite în cadrul unui sistem SLAM bidimensional, care folosește senzori LiDAR, IMU și senzori odometrici, care utilizează scan matching și un filtru Kalman pentru estimarea poziției.
 
-În primul rând, fiind bazat pe scan matching, sistemul este deosebit de sensibil la mediul înconjurător, de exemplu: un mediu fără prea multe repere precum un hol lung  va duce la imposibilitatea detectării mișcării.
+În primul rând, fiind bazat pe scan matching, sistemul este deosebit de sensibil la mediul înconjurător, de exemplu: un mediu fără prea multe repere precum un hol lung va duce la imposibilitatea detectării mișcării.
 Un sistem de tip scan to scan matching este de asemenea vulnerabil la acumularea erorilor între capturi, motiv pentru care este de preferat o abordare de tip scan to map matching.
 Abordarea scan to map introduce complexitatea unei alte componente care reconstruiește harta pentru a putea fi comparată cu noua captură.
-Altă problemă este reprezentată de momentele în care robotul intra in încăperi total noi, moment în care alinierea capturilor senzorului nu va mai produce rezultate.
-În acel moment va fi nevoie să se utilizeze datele de la senzori și fie considerate ca fiind corecte.
-Datele preluate de senzori, IMU si odometrici nu sunt perfecte însă, în special cei odometrici sunt mult mai sensibili.
-Aceștia pot fi influentați de suprafața pe care se află, dacă este mai alunecoasă, distanța parcursă estimată va fi greșită.
+Altă problemă este reprezentată de momentele în care robotul intră în încăperi total noi, moment în care alinierea capturilor senzorului nu va mai produce rezultate.
+În acel moment va fi nevoie să se utilizeze datele de la senzori și să fie considerate ca fiind corecte.
+Datele preluate de senzori, IMU și odometrici nu sunt perfecte însă, în special cei odometrici sunt mult mai sensibili.
+Aceștia pot fi influențați de suprafața pe care se află, dacă este mai alunecoasă, distanța parcursă estimată va fi greșită.
 În plus, abordarea de tip dead-reckoning, în care se integrează vitezele pentru a obține distanța va acumula inevitabil mici erori de calcul care în timp vor crea drift-ul poziției.
 
 Din acest motiv, dacă se folosește un filtru Kalman, se pot combina mai mulți senzori pentru a obține o estimare care să nu fie atât de vulnerabilă la slăbiciunile unui singur senzor.
 
 Altă problemă este reprezentată de deformarea datelor primite de la LiDAR.
-Datele sunt preluate in același timp in care robotul se deplasează, astfel fasciculele trimise la un moment de timp, sunt măsurate din altă poziție a robotului.
-Acest efect este mult mai pronunțat în momentul in care vitezele de deplasare și rotație sunt mai mari.
-Pentru a evita această problema, trebuie un introdus un pas inainte de etapa de scan-matching care să compenseze pentru mișcarea din timpul scanării pentru a corecta pozițiile obstacolelor lovite de către fasciculele emise.
+Datele sunt preluate în același timp în care robotul se deplasează, astfel fasciculele trimise la un moment de timp, sunt măsurate din altă poziție a robotului.
+Acest efect este mult mai pronunțat în momentul în care vitezele de deplasare și rotație sunt mai mari.
+Pentru a evita această problemă, trebuie introdus un pas înainte de etapa de scan-matching care să compenseze pentru mișcarea din timpul scanării pentru a corecta pozițiile obstacolelor lovite de către fasciculele emise.
 
 == 2.3 Soluții alternative
 
 Gmapping descris în detaliu în @gmapping este cea mai veche metodă care va fi prezentată în această secțiune.
 Din punct de vedere al senzorilor, este necesar un senzor LiDAR precum și o sursă de odometrie a roților.
 Este o metodă bazate pe filtrele de particule, mai anume folosește un filtru de particule Rao-Blackwellized.
-O particulă reprezintă o traiectorie potențială  a robotului și o hartă, construită pe baza observațiilor și a traiectoriei, asociată fiecărei particule.
+O particulă reprezintă o traiectorie potențială  a robotului și o hartă, construită pe baza observațiilor și a traiectoriei, asociată fiecărei particule. @gmapping
 Problema tradițională a abordărilor pe baza filtrelor de particule este faptul că este necesar un număr foarte mare de particule, mai ales in cadrul mediilor mari și a traiectoriilor complexe.
 
 Pentru a evita această problemă, Gmapping vine cu mai multe îmbunătățiri.
 În primul rând, ultima măsurătoare a senzorilor este luată în calcul la momentul în care se generează noile particule.
 Pentru aceasta, pornind de la odometrie, se realizează o etapă de scan matching intre harta asociată particulei și ultima captură de la LiDAR.
 În felul acesta se găsește cea mai probabilă poziție a robotului, în jurul căreia se generează noile particule.
-În cazul in care etapa de scan matching eșuează, se revine la abordarea clasică, bazată exclusiv pe odometrie.
+În cazul in care etapa de scan matching eșuează, se revine la abordarea clasică, bazată exclusiv pe odometrie. @gmapping
 
 Cealaltă adiție are legătură cu reeșantionarea, când particulele cu ponderi mici sunt eliminate, lucru care poate duce la eliminarea unor particule care sunt de fapt folositoare.
-În cadrul Gmapping, se calculează un coeficient, dimensiunea efectivă a eșantionului, care măsoară cât de bine setul de particule modelează distribuția dorită.
+În cadrul Gmapping, se calculează un coeficient, dimensiunea efectivă a eșantionului, care măsoară cât de bine setul de particule modelează distribuția dorită. @gmapping
 În momentul in care acest indice scade sub un anumit prag, de obicei jumătate din numărul particulelor, cele cu o pondere mică sunt eliminate.
 
 Prin aceste două măsuri, Gmapping reușește să reducă semnificativ numărul de particule necesare, comparativ cu alte metode anterioare bazate pe filtre de particule.
@@ -220,7 +220,7 @@ Este mult mai simplu față de alte opțiuni, și este destinat roboților făr�
 
 Modul de funcționare poate fi descris in felul următor: măsurătorile LiDAR, o dată preluate și preprocesate sunt comparate cu hărțile precedente, folosind o optimizare de tip Gauss-Newton pentru a obține transformarea aferentă.
 Folosirea unei optimizări Gauss-Newton, față de alte variante precum ICP este justificată de costul mai mic de putere computațional și posibilitatea de a compara cu mai multe hărți.
-Acest lucru este important deoarece, pentru a evita blocarea intr-un minim local, sunt stocate mai multe reprezentări ale hărții, cu rezoluții care cresc cu fiecare reprezentare, estimându-se poziția prin compararea cu hărți din ce in ce mai precise, harta rezultată la final fiind adăugată la vârful structurii piramidale.
+Acest lucru este important deoarece, pentru a evita blocarea intr-un minim local, sunt stocate mai multe reprezentări ale hărții, cu rezoluții care cresc cu fiecare reprezentare, estimându-se poziția prin compararea cu hărți din ce in ce mai precise, harta rezultată la final fiind adăugată la vârful structurii piramidale. @hectorslam
 
 Un dezavantaj adus de structura simplă este faptul că HectorSLAM este în mod special sensibil la acumularea erorilor și apariția drift-ului când se confruntă cu traiectorii lungi.
 Acest aspect este exacerbat de lipsa unui mecanism de loop closure, specific abordărilor de tip scan matching.
@@ -229,11 +229,11 @@ Cartographer prezentat în @cartographer este o soluție bazată pe grafuri, cap
 Spre deosebire de metodele menționate înainte, aceasta este o variantă mult mai complexă și completă.
 Acesta este împărțit în două module separate: unul care realizează un SLAM local, în front-end, și unul care realizează un SLAM global, în back-end.
 Principiul de funcționare constă în realizarea de subhărți care apoi sunt suprapuse între ele  și se realizează etapa de SLAM global.
-Mai exact, sistemul aliniază scanări consecutive pentru a construi subhărți.
-O măsurătoare este inserată conform alogritmului de optimizare nonliniar Ceres scan matching, care caută poziția optimă care maximizează probabilitatea ca punctele detectate de LiDAR să se potrivească cu structurile subhărții.
+Mai exact, sistemul aliniază scanări consecutive pentru a construi subhărți. 
+O măsurătoare este inserată conform alogritmului de optimizare nonliniar Ceres scan matching, care caută poziția optimă care maximizează probabilitatea ca punctele detectate de LiDAR să se potrivească cu structurile subhărții. @cartographer
 Acesta este un proces precis când este vorba de distanțe scurte, dar acumulează erori pe termen lung.
 
-Din acest motiv, are loc etapa de SLAM global, care presupune optimizarea unui graf format din pozițiile și subhărțile estimate la faza locală.
+Din acest motiv, are loc etapa de SLAM global, care presupune optimizarea unui graf format din pozițiile și subhărțile estimate la faza locală. @cartographer
 Când se finalizează crearea unei subhărți, devine disponibilă pentru închiderea buclelor.
 În timpul în care se realizează partea locală, în paralel se verifică dacă o captură a senzorilor se potrivește cu una dintre hărțile deja cunoscute, ceea ce ar însemna că s-a vizitat un loc deja cunoscut, deci se poate închide o buclă.
 În acel moment se introduce o nouă constrângere în graf, și se rezolvă erorile acumulate pe parcurs.
@@ -247,7 +247,7 @@ Acest lucru se realizează prin salvarea atât a datelor brute, cât și a grafu
 Acestea pot sa fie serializate și deserializate pentru a putea continua cartografierea pe parcursul mai multor sesiuni.
 SLAM Toolbox introduce și o componentă care permite utilizatorului să intervină asupra nodurilor din graf, lucru care poate ajuta, de exemplu la inchideri de bucle.
 
-Vine cu mai multe moduri de utilizare: unul asincron care este conceput pentru a crea hărți cât mai corecte, fără considerente de timp, având un buffer care stochează toate măsurătorile pentru a fi procesate în totalitate, un mod sincron care prioritizează performanțele în timp real în detrimentul calității mai ridicate a hărții și un mod destinat navigării în cadrul unei hărți deja cunoscute, fără a mai interveni permanent asupra acesteia.
+Vine cu mai multe moduri de utilizare @Macenski2021: unul asincron care este conceput pentru a crea hărți cât mai corecte, fără considerente de timp, având un buffer care stochează toate măsurătorile pentru a fi procesate în totalitate, un mod sincron care prioritizează performanțele în timp real în detrimentul calității mai ridicate a hărții și un mod destinat navigării în cadrul unei hărți deja cunoscute, fără a mai interveni permanent asupra acesteia.
 Pentru a realiza ultimul mod, se folosește un buffer rotativ care menține măsurătorile curente, care sunt adăugate grafului permanent, în forma unor noi constrângeri și poziții. 
 La îndepărtare aceste măsurători sunt eliminate, graful revenind la forma originală, salvată precedent.
 
