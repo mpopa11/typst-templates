@@ -71,7 +71,7 @@ Cel mai mare avantaj față de soluțiile bazate pe optimizarea grafurilor precu
 Pe de altă parte, față de soluțiile bazate pe optimizarea grafurilor, apare un dezavantaj clar reprezentat de lipsa unei componente de închiderea buclelor, care face imposibilă reglarea traiectoriei până la momentul în care se detectează o buclă pentru o robustețe pe termen lung și rezultate mai bune în cazul traiectoriilor mai lungi, unde prezența erorilor se acumulează semnificativ.
 
 Cât despre rezultate, s-au înregistrat bune performanțe pentru ambele configurări ale sistemului testate, cu sau fără estimarea poziției bazată pe EKF.
-Astfel s-au înregistrat erori mai mici de 0.1 % între traiectoriile globale și erori sub 0.09% la nivel local între poziții succesive.
+Astfel s-au înregistrat erori mai mici de 0.1% între traiectoriile globale și erori sub 0.09% la nivel local între poziții succesive.
 Hărțile obținute au demonstrat o calitate bună a reprezentării mediului înconjurător, menținând caracteristicile acestuia și păstrând o consistență structurală adecvată.
 
 Efectul obținut de adăugarea unui nod de EKF pentru a estima o primă poziție nu a avut efecte consistente de la care să se poată trage concluzii clare cu privire la calitatea traiectoriilor estimate; în schimb, a avut efect la nivelul hărților rezultate, acestea fiind mai solide structural și reducând distorsiunile cauzate de rotațiile excesive ale robotului.

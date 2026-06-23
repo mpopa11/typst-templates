@@ -15,7 +15,7 @@
 #let language    = "ro"
 
 // Basic metadata
-#let thesis_title = "Dezvoltarea unei arhitecturi SLAM în timp real, utilizând ROS2, Gazebo și Python, pentru cartografierea și navigația roboților mobili autonomi"
+#let thesis_title = "Sistem de localizare și cartografiere simultană bazat pe scan matching pentru roboți mobili autonomi în spații închise"
 #let supervisor   = "Ștefan-Dan Ciocîrlan"
 #let student      = "Mihai Popa"
 #let year         = "2026"

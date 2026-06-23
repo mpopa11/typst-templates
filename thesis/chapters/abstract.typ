@@ -43,5 +43,5 @@
 Această lucrare se încadrează în domeniul roboticii, mai exact obiectul acestei lucrări este reprezentat de roboții mobili autonomi, abordând problema localizării și cartografierii simultane (SLAM).
 Accentul este pus pe roboții autonomi care operează în spații închise, unde robotul trebuie să își cunoască atât mediul înconjurător, cât și poziția relativă în acesta, folosindu-se doar de senzorii de care dispune la bord, într-o manieră eficientă din punct de vedere al utilizării resurselor.
 Problema principală constă în faptul că componentele de localizare și cartografiere nu sunt independente una față de cealaltă și trebuie abordate în tandem pentru a putea obține rezultate satisfăcătoare.
-Pentru a aborda problema, această lucrare propune un sistem de SLAM bidimensional bazat pe scan matching dezvoltat în ROS 2, folosindu-se de un LiDAR, senzorii odometrici ai roților și un IMU.
-Rezultatele surprind faptul că soluția oferă o traiectorie ce prezintă o eroare de sub 0.1% din lungimea traiectoriei și reprezintă mediul înconjurător într-o manieră fidelă.
+Pentru a aborda problema, se propune un sistem de SLAM bidimensional bazat pe scan matching dezvoltat în ROS 2, folosindu-se de un LiDAR, senzorii odometrici ai roților și un IMU.
+Rezultatele surprind faptul că soluția oferă o traiectorie ce prezintă o eroare de sub 0.1% din lungimea traiectoriei și că mediul înconjurător este reprezentat într-o manieră fidelă.

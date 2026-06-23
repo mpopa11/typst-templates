@@ -52,10 +52,10 @@
 
 
 == 5.1 Structura experimentului
-Evaluarea soluției se realizează prin evaluarea a celor două componente principale ale oricărei soluții de SLAM: localizarea și cartografierea.
+Evaluarea soluției se realizează prin evaluarea celor două componente principale ale oricărei soluții de SLAM: localizarea și cartografierea.
 În alte cuvinte, o soluție bună trebuie să fie capabilă să urmărească traiectoria reală cât mai bine și să construiască hărți de calitate care să reprezinte cât mai fidel posibil mediul de lucru al robotului.
 Din aceste considerente au fost folosite metricile discutate anterior în lucrare, anume valorile RMSE ale RPE (@eq:rpe-rmse) și ATE (@eq:ate-rmse).
-Calitatea hărților rezultate este măsurată folosind metricele de proporție, numărul de colțuri din hartă și numărul de spații închise.
+Calitatea hărților rezultate este măsurată folosind metricile de proporție, numărul de colțuri din hartă și numărul de spații închise.
 
 Pentru evaluarea traiectoriei este necesară și existența unei traiectorii reale, față de care să se facă comparațiile între acestea.
 
@@ -268,7 +268,7 @@ La nivel local (@tbl:rpe) ajută minimal în cazul unor traiectorii scurte (pe h
 
 La nivel global (@tbl:ate), tendința este asemănătoare, însă erorile au valori mai mari, ceea ce este de așteptat, considerând că nu există o componentă de detectare și închidere a buclelor.
 Se observă că erorile scad pentru configurația cu EKF pentru primele două traiectorii, cea scurtă și cea medie.
-Cea medie are chiar o scădere impresionantă față de cealaltă configurație de 4 cm.
+Cea medie are chiar o scădere impresionantă de 4 cm față de cealaltă configurație.
 Cu toate acestea, pentru traiectoria cea mai lungă, rezultatele sunt mai proaste.
 
 
@@ -299,10 +299,10 @@ Cu toate acestea, pentru traiectoria cea mai lungă, rezultatele sunt mai proast
 În @tbl:map-metrics se regăsesc rezultatele metricilor legate de calitatea structurală a hărții. 
 Acestea trebuie însă puse în relație cu hărțile obținute pentru a obține o înțelegere mai profundă cu privire la rezultate.
 
-În cadrul primei hărți (@fig:world-maps) se observă similarități ridicate între cele 2 hărți rezulate.
+În cadrul primei hărți (@fig:world-maps) se observă similarități ridicate între cele 2 hărți rezultate.
 Ambele au reușit să ilustreze fidel mediul, precum și coloanele, fără distorsiuni ale reperelor.
 
-În cazul acesta, numărul de  spații închise nu este relevant, deoarece coloanele din interiorul hărții sunt detectate ca fiind acele spații închise care ar fi în plus. 
+În cazul acesta, numărul de spații închise nu este relevant, deoarece coloanele din interiorul hărții sunt detectate ca fiind acele spații închise care ar fi în plus. 
 Din acest punct de vedere prima configurație a completat mai bine harta.
 Pe de altă parte, proporția de celule ocupate este considerabil mai mică comparativ, la cea de-a doua configurație, ceea ce înseamnă că pereții sunt mai fini, deci și poziția a fost mai stabilă în cea de-a doua configurație.
 
@@ -456,7 +456,7 @@ Per total, considerând toate rezultatele obținute, atât legate de metricile s
   ]
 )<fig:amazon-maps>
 
-În primul rând, erorile obținute, la nivel global, la momentul potrivirii traiectoriei estimate cu cea reală sunt semnificativ de mici: între 1.7-1.9 cm pentru o traiectorie de 26 m, 10-14 cm pentru o traiectorie de 87 m și 4.2-5.4 cm la o traiectorie de 108m.
+În primul rând, erorile obținute, la nivel global, la momentul potrivirii traiectoriei estimate cu cea reală sunt semnificativ de mici: între 1.7-1.9 cm pentru o traiectorie de 26 m, 10-14 cm pentru o traiectorie de 87 m și 4.2-5.4 cm la o traiectorie de 108 m.
 Aceste rezultate sunt impresionante, indicând o ameliorare bună a drift-ului.
 Erorile locale sunt între 2 și 5 cm indiferent de traiectorie și configurație, ceea ce înseamnă erori de sub 0.1%.
 

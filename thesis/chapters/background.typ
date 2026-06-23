@@ -54,49 +54,51 @@
 //    Replace each block below (the text between _[ and ]_) with your own paragraph(s) following the order above.
 
 // În contextul în care automatizarea reprezintă tendința dominantă a ultimilor ani, integrarea roboților autonomi devine o nevoie din ce în ce mai mare pentru diferite zone de activitate atât în industrie cât și în viața de zi cu zi a oamenilor. Astfel, oamenii se comfrontă cu tot felul de roboți de acest tip din ce în ce mai mult
+
 == 2.1 Context
 Un robot autonom reprezintă un sistem capabil să ia decizii, pe baza observațiilor din mediul în care se află în vederea îndeplinirii unor sarcini.
 Față de sistemele autonome clasice, care execută sarcini stabilite încă din faza de proiectare, roboții autonomi trebuie să fie capabili să ia decizii singuri, în baza observațiilor din mediu.
-În acest context, se remarcă roboții mobili care reprezintă obiectul acestei lucrări, apare și problematica unui mediu care nu este fix. 
+În acest context, se remarcă roboții mobili care reprezintă obiectul acestei lucrări.
+De asemenea, apare și problematica unui mediu care nu este fix. 
 Robotul se deplasează, observă noi caracteristici pe care trebuie să le gestioneze pentru a putea realiza sarcina cu succes.
 
-Din această cauză, este necesar ca robotul să își cunoască atât mediul inconjurător, dar și unde se află în acesta.
+Din această cauză, este necesar ca robotul să își cunoască atât mediul înconjurător, dar și unde se află în acesta.
 Cunoașterea acestor două elemente este fundamentală pentru sarcina de bază a unui astfel de robot: navigația.
 Robotul, indiferent de scopul său principal, fie că vorbim de roboți destinați sarcinilor industriale (roboți de sortare, transpalete automate), agriculturale sau de uz casnic sau comercial (roboți de curățenie, de livrare), trebuie să poată naviga eficient și în siguranță prin mediul în care se află.
-Acest lucru presupune, de obicei, crearea unei hărți a mediului inconjurător, care ulterior poate fi folosită pentru a naviga.
+Acest lucru presupune, de obicei, crearea unei hărți a mediului înconjurător, care ulterior poate fi folosită pentru a naviga.
 
 Aceasta poartă numele, în literatura de specialitate, de Simultaneous Localization and Mapping (SLAM).
-Prin localizare se întelege estimarea poziției și a orientării într-un sistem de referință.
-Localizarea se poate realiza cu ajutorul a mai multor senzori fie cei interni (odometrici, inerțiali), care măsoară starea internă a robotului și cei externi (LiDAR, camere). 
+Prin localizare se înțelege estimarea poziției și a orientării într-un sistem de referință.
+Localizarea se poate realiza cu ajutorul a mai multor senzori fie cei interni (odometrici, inerțiali), care măsoară starea internă a robotului, fie cei externi (LiDAR, camere). 
 
 Poate fi totuși puțin contraintuitiv faptul că senzorii GPS nu sunt la fel de folosiți ca cei enumerați mai sus. Deși aceștia aduc avantaje clare, în special în legătură cu ușurința de utilizare, precizia acestor senzori lasă de dorit pentru acest caz de utilizare. 
 În plus, senzorii GPS sunt foarte sensibili la mediul înconjurător, astfel și în cele mai bune condiții senzorii GPS tot au erori de până la câțiva metri. Astfel, aceștia sunt folosiți în combinație cu senzorii menționați anterior.
-Prin mapare se întelege construirea unei reprezentări a mediului în care se află robotul care va putea fi ulterior folosită și la localizare cât și la navigație, planificarea rutelor.
+Prin mapare se înțelege construirea unei reprezentări a mediului în care se află robotul care va putea fi ulterior folosită și la localizare cât și la navigație, planificarea rutelor.
 
 Astfel, apar sistemele SLAM, care indiferent de modul în care sunt proiectate, răspund inevitabil la aceleași două probleme: localizare și mapare.
 Uzual, sistemele SLAM au o arhitectură împărțită în două module importante: un front-end și un back-end. @sh-p1-prelude
-Modulul de front-end poate fi considerat ca fiind modulul de procesare și, de multe ori, oferă o prima estimare a poziției. 
+Modulul de front-end poate fi considerat ca fiind modulul de procesare și, de multe ori, oferă o primă estimare a poziției. 
 Procesează fluxul de date de la senzori (inerțiali, odometrici, LiDAR, camere, Radar) și produce reprezentări care sunt mai ușor de gestionat.
-Realizează extragerea caracteristicilor din mediu și de asemenea preprocesează datele obținute de la senzori.
+Realizează extragerea caracteristicilor din mediu și, de asemenea, preprocesează datele obținute de la senzori.
 Deseori, în cadrul acestui modul se incorporează componenta de detectare a buclelor, care apar în momentul în care robotul, în urma traiectoriei sale, ajunge într-un punct care a fost deja vizitat precedent. @sh-p1-prelude 
 
-Modulul de back-end preia datele de la front-end și are sarcina de a calcula traiectoria robotului și să construiască harta, luând în calcul constrângerile trimise de către front-end.
+Modulul de back-end preia datele de la front-end și are sarcina de a calcula traiectoria robotului și de a construi harta, luând în calcul constrângerile trimise de către front-end.
 
-Sistemele SLAM se pot clasifica după mai multe criterii: după dimensionalitatea mediului avem de a face cu SLAM 2D sau SLAM 3D. 
+Sistemele SLAM se pot clasifica după mai multe criterii: după dimensionalitatea mediului avem de-a face cu SLAM bidimensional sau SLAM tridimensional. 
 Practic, modul de reprezentare a mediului se realizează în funcție de caz, bidimensional sau tridimensional.
-În cazul reprezentărilor 2D, acestea vin cu diferite avantaje precum eficiența din punct de vedere a resurselor utilizate sau simplitatea conceptuală.
+În cazul reprezentărilor 2D, acestea vin cu diferite avantaje precum eficiența din punct de vedere al resurselor utilizate sau simplitatea conceptuală.
 În schimb, reprezentările 3D sunt folosite în momentul în care se doresc hărți cu un nivel de detaliu mult mai mare.
 Acestea vin, totuși, cu un cost ridicat din punct de vedere al resurselor utilizate.
 
 Spre exemplu, în cazul senzorilor LiDAR 2D, există o limitare cu privire la natura senzorului.
-Fiind vorba de un Lidar 2D, acesta trimite fascicule de lumină doar la nivelul senzorului, astfel, orice obstacol care nu este direct la aceeași înălțime cu senzorul nu va fi înregistrat.
+Fiind vorba de un LiDAR 2D, acesta trimite fascicule de lumină doar la nivelul senzorului, astfel, orice obstacol care nu este direct la aceeași înălțime cu senzorul nu va fi înregistrat.
 Din această cauză va fi nevoie de senzori adiționali pentru a putea asigura navigarea în siguranță.
 
 În funcție de natura componentei de estimare pot fi împărțite în principal în: metode bazate pe filtre probabilistice, metode bazate pe scan matching și metode bazate pe optimizarea grafurilor. @rs17071214
 
 Metodele bazate pe filtrarea probabilistică tratează problema de SLAM ca fiind o problemă de estimare a stării în timp real. 
 Acestea încearcă să obțină doar locația curentă a robotului, spre deosebire de alte metode.
-La baza acestei metode stă filtrarea Bayesiana, care vine cu o predicție a stării curente în baza stărilor precedente și a comenzilor curente.
+La baza acestei metode stă filtrarea Bayesiană, care vine cu o predicție a stării curente în baza stărilor precedente și a comenzilor curente.
 Se bazează pe două relații fundamentale @rs17071214:
 #set math.equation(numbering: "(1)")
 
@@ -114,36 +116,36 @@ unde:
 
 
 @eq:transition ilustrează cum probabilitatea ca starea sistemului la un moment dat $t$, condiționată de istoricul de stări precedente, istoricul de comenzi și cel al măsurătorilor este echivalentă cu probabilitatea condiționată doar de starea precedentă și comanda actuală.
-@eq:measurement ilustrează ca măsurătoarea curentă depinde doar de starea curentă, nu și de istoricul stărilor, comenzilor sau măsurătorilor.
+@eq:measurement ilustrează că măsurătoarea curentă depinde doar de starea curentă, nu și de istoricul stărilor, comenzilor sau măsurătorilor.
 
 Pe baza filtrării Bayesiene s-au dezvoltat ulterior 2 clase de soluții: soluțiile bazate pe Filtrul Kalman Extins (EKF) și cele bazate pe filtre de particule.
 
-Conform @Thrun2008 EKF SLAM  menține o singură estimare a poziției robotului, cât și pentru reperele din mediu și o estimare a incertitudinii.
+Conform @Thrun2008 EKF SLAM menține o singură estimare a poziției robotului, cât și a reperele din mediu, și o estimare a incertitudinii.
 Robotul și mulțimea de repere sunt tratate ca fiind entități diferite.
 Când robotul se deplasează prin spații noi, eroarea de poziție crește și noile repere moștenesc această eroare.
 În momentul în care se revizitează un reper deja cunoscut, se produce ancorarea robotului și se corectează eroarea, corecție care este apoi propagată celorlalte repere anterioare.
-Totuși abordările bazate pe EKF, nu mai sunt la fel de folosite actual, venind cu un cost foarte mare computațional față de alte metode, fiind nevoie de o matrice de dimensiuni foarte mari pentru a păstra informațiile despre relația dintre repere.
+Totuși, abordările bazate pe EKF, nu mai sunt la fel de folosite actual, venind cu un cost foarte mare computațional față de alte metode, fiind nevoie de o matrice de dimensiuni foarte mari pentru a păstra informațiile despre relația dintre repere. @Thrun2008
 
 Tot în @Thrun2008 este descrisă și metoda de SLAM bazată pe filtre de particule.
 Față de EKF, filtrele de particule calculează mai multe "particule", fiecare reprezentând o estimare despre drumul pe care l-a parcurs robotul.
 Când robotul se află în mișcare, fiecare particulă simulează o mișcare diferită.
 Când se întâlnește un obstacol, particulele ale căror hărți se potrivesc cu realitatea primesc un scor mai mare și se înmulțesc, în timp ce cele cu estimări greșite sunt eliminate.
-Apare totuși o limitare în cazul deplasărilor de lungă durată și a hărților mai mari. 
+Apare totuși o limitare în cazul deplasărilor de lungă durată și al hărților mai mari. 
 Pe măsură ce se deplasează robotul, există riscul ca particulele șterse să fie de fapt bune și să fi fost șterse eronat.
-În acel moment, se pierd ipotezele corecte și, în consecință harta își pierde coerența și corectitudinea.
+În acel moment, se pierd ipotezele corecte și, în consecință harta își pierde coerența și corectitudinea. @Thrun2008
 
 Sistemele bazate pe scan matching se bazează pe identificarea transformării optime dintre 2 seturi de date, astfel estimându-se deplasarea dintre cele 2 poziții, adică distanța parcursă și direcția în care s-a deplasat robotul.
 Pe măsură ce se deplasează, robotul captează mediul la diferite momente de timp.
-Aceste căptări pot fi comparate, folosind diferiți algoritmi printre care: Iterative Closest Point (ICP) și Correlative Scan Matching (CSM). @rs17071214
+Aceste captări pot fi comparate, folosind diferiți algoritmi printre care: Iterative Closest Point (ICP) și Correlative Scan Matching (CSM). @rs17071214
 Există mai multe abordări în cazul sistemelor de scan matching. 
 
 Abordarea clasică este cea de scan to scan matching, în care se compară capturile senzorilor între două momente consecutive de timp, astfel încât se poate estima distanța parcursă între momentele captării.
-O problema cu această metodă este faptul că această abordare este predispusă erorilor cumulative de calcule care pe termen lung vor duce la pierderea poziției.
+O problemă cu această metodă este faptul că această abordare este predispusă erorilor cumulative de calcule care pe termen lung vor duce la pierderea poziției.
 O altă problemă este reprezentată de scenariul unui mediu fără prea multe repere, precum un hol lung.
 În acest caz, potrivirea va fi perfectă, și nu se vor detecta mișcările.
-O altă abordare este cea de scan to map matching, în care captura robotului este comparată cu o hartă construită pe parcurs de robot, practic, în cadrul careia se poziționează captura curentă.
+O altă abordare este cea de scan to map matching, în care captura robotului este comparată cu o hartă construită pe parcurs de robot, practic, în cadrul căreia se poziționează captura curentă.
 Este o variantă mai stabilă dar pe măsură ce crește harta la dimensiuni foarte mari, pot apărea probleme legate de performanță.
-Din această cauză, uneori este preferată extragerea unei bucăți din hartă, în jurul presupusei poziției a robotului, față de care este comparată captura. @sh-ch8-lidar
+Din această cauză, uneori este preferată extragerea unei bucăți din hartă, în jurul presupusei poziții a robotului, față de care este comparată captura. @sh-ch8-lidar
 
 Nu în ultimul rând, cea mai folosită la momentul actual metodă, dintre cele menționate, de soluțiile comerciale este cea bazată pe optimizarea grafurilor.
 Dacă metodele bazate pe filtre probabilistice caută să estimeze poziția corectă, abordările bazate pe grafuri analizează tot istoricul traiectoriei robotului.
@@ -156,16 +158,16 @@ Construirea grafului revine în principal front-end-ului, iar back-end-ul se ocu
 În @Thrun2008 modul de funcționare al unui astfel de sistem este asemănat cu un sistem resort-masă.
 Modelul propune ca nodurile grafului să fie asociate cu inele metalice, în timp ce arcele sunt resorturi care conectează inelele.
 Pe măsură ce se obțin noi măsurători, se adaugă un nou inel, care este ulterior conectat cu un resort de inelul precedent.
-Din moment ce măsurătorile nu sunt perfecte, nici resorturile nu vor fi perfect și vor conține erori, astfel lanțul va devia de la adevărul fizic.
-Dacă robotul se intoarce într-un loc deja vizitat, un inel precedent, se adaugă un nou resort, între inelul vizitat și inelul curent.
+Din moment ce măsurătorile nu sunt perfecte, nici resorturile nu vor fi perfecte și vor conține erori, astfel lanțul va devia de la adevăr.
+Dacă robotul se întoarce într-un loc deja vizitat, un inel precedent, se adaugă un nou resort, între inelul vizitat și inelul curent.
 Din cauza erorilor acumulate, resortul va fi întins la maxim, ceea ce va face ca fiecare inel din buclă să se miște pentru a echilibra sistemul la o stare de energie minimă, practic eliminând erorile de măsurare de până în acel moment. @Thrun2008
 
 O variantă foarte folosită a acestui tip de sistem este cel bazat pe grafurile de factori (factor graphs). @sh-ch1-fg4slam
-În cazul acestor grafuri, există mai multe tipuri de noduri: variabilele, care reprezintă ceea ce dorim să aflam, de exemplu pozițiile robotului, și, factorii, constrângerile observate pe traiectorie.
+În cazul acestor grafuri, există mai multe tipuri de noduri: variabilele, care reprezintă ceea ce dorim să aflăm, de exemplu pozițiile robotului, și, factorii, constrângerile observate pe traiectorie.
 Fiecare factor este practic o ecuație care leagă variabile între ele.
 Scopul este cel de a realiza inferența probabilistică, anume maximizare a posteriori.
 Rezolvarea grafului presupune aflarea configurației variabilelor care maximizează produsul factorilor din rețea.
-Considerând faptul că măsurătorile sunt modelate folosind zgomotul Gaussian, această problemă devine, în practică, o problemă de minimizare celor mai mici pătrate neliniare.
+Considerând faptul că măsurătorile sunt modelate folosind zgomotul Gaussian, această problemă devine, în practică, o problemă de minimizare a celor mai mici pătrate neliniare.
 Se caută valorile variabilelor pentru care suma erorilor pătratice este minimizată.
 Din cauza caracterului bipartit și a faptului că fiecare factor depinde doar de un mic număr de variabile, rezolvarea problemei este eficientă chiar și pentru cele mai lungi traiectorii. @sh-ch1-fg4slam
 
@@ -198,19 +200,19 @@ Pentru a evita această problemă, trebuie introdus un pas înainte de etapa de 
 
 Gmapping descris în detaliu în @gmapping este cea mai veche metodă care va fi prezentată în această secțiune.
 Din punct de vedere al senzorilor, este necesar un senzor LiDAR precum și o sursă de odometrie a roților.
-Este o metodă bazate pe filtrele de particule, mai anume folosește un filtru de particule Rao-Blackwellized.
-O particulă reprezintă o traiectorie potențială  a robotului și o hartă, construită pe baza observațiilor și a traiectoriei, asociată fiecărei particule. @gmapping
-Problema tradițională a abordărilor pe baza filtrelor de particule este faptul că este necesar un număr foarte mare de particule, mai ales in cadrul mediilor mari și a traiectoriilor complexe.
+Este o metodă bazată pe filtrele de particule, și anume folosește un filtru de particule Rao-Blackwellized.
+O particulă reprezintă o traiectorie potențială a robotului și o hartă, construită pe baza observațiilor și a traiectoriei, asociată fiecărei particule. @gmapping
+Problema tradițională a abordărilor pe baza filtrelor de particule este faptul că este necesar un număr foarte mare de particule, mai ales în cadrul mediilor mari și a traiectoriilor complexe.
 
 Pentru a evita această problemă, Gmapping vine cu mai multe îmbunătățiri.
 În primul rând, ultima măsurătoare a senzorilor este luată în calcul la momentul în care se generează noile particule.
-Pentru aceasta, pornind de la odometrie, se realizează o etapă de scan matching intre harta asociată particulei și ultima captură de la LiDAR.
+Pentru aceasta, pornind de la odometrie, se realizează o etapă de scan matching între harta asociată particulei și ultima captură de la LiDAR.
 În felul acesta se găsește cea mai probabilă poziție a robotului, în jurul căreia se generează noile particule.
-În cazul in care etapa de scan matching eșuează, se revine la abordarea clasică, bazată exclusiv pe odometrie. @gmapping
+În cazul în care etapa de scan matching eșuează, se revine la abordarea clasică, bazată exclusiv pe odometrie. @gmapping
 
 Cealaltă adiție are legătură cu reeșantionarea, când particulele cu ponderi mici sunt eliminate, lucru care poate duce la eliminarea unor particule care sunt de fapt folositoare.
 În cadrul Gmapping, se calculează un coeficient, dimensiunea efectivă a eșantionului, care măsoară cât de bine setul de particule modelează distribuția dorită. @gmapping
-În momentul in care acest indice scade sub un anumit prag, de obicei jumătate din numărul particulelor, cele cu o pondere mică sunt eliminate.
+În momentul în care acest indice scade sub un anumit prag, de obicei jumătate din numărul particulelor, cele cu o pondere mică sunt eliminate.
 
 Prin aceste două măsuri, Gmapping reușește să reducă semnificativ numărul de particule necesare, comparativ cu alte metode anterioare bazate pe filtre de particule.
 
@@ -218,9 +220,9 @@ Un alt sistem SLAM este reprezentat de HectorSLAM detaliat în @hectorslam.
 Acesta este o soluție bazată pe scan matching și spre deosebire de alte soluții, acesta nu se folosește de senzori odometrici.
 Este mult mai simplu față de alte opțiuni, și este destinat roboților fără mari capabilități de calcul.
 
-Modul de funcționare poate fi descris in felul următor: măsurătorile LiDAR, o dată preluate și preprocesate sunt comparate cu hărțile precedente, folosind o optimizare de tip Gauss-Newton pentru a obține transformarea aferentă.
-Folosirea unei optimizări Gauss-Newton, față de alte variante precum ICP este justificată de costul mai mic de putere computațional și posibilitatea de a compara cu mai multe hărți.
-Acest lucru este important deoarece, pentru a evita blocarea intr-un minim local, sunt stocate mai multe reprezentări ale hărții, cu rezoluții care cresc cu fiecare reprezentare, estimându-se poziția prin compararea cu hărți din ce in ce mai precise, harta rezultată la final fiind adăugată la vârful structurii piramidale. @hectorslam
+Modul de funcționare poate fi descris în felul următor: măsurătorile LiDAR, odată preluate și preprocesate sunt comparate cu hărțile precedente, folosind o optimizare de tip Gauss-Newton pentru a obține transformarea aferentă.
+Folosirea unei optimizări Gauss-Newton, față de alte variante precum ICP este justificată de costul mai mic de putere computațională și posibilitatea de a compara cu mai multe hărți.
+Acest lucru este important deoarece, pentru a evita blocarea într-un minim local, sunt stocate mai multe reprezentări ale hărții, cu rezoluții care cresc cu fiecare reprezentare, estimându-se poziția prin compararea cu hărți din ce în ce mai precise, harta rezultată la final fiind adăugată la vârful structurii piramidale. @hectorslam
 
 Un dezavantaj adus de structura simplă este faptul că HectorSLAM este în mod special sensibil la acumularea erorilor și apariția drift-ului când se confruntă cu traiectorii lungi.
 Acest aspect este exacerbat de lipsa unui mecanism de loop closure, specific abordărilor de tip scan matching.
@@ -228,9 +230,9 @@ Acest aspect este exacerbat de lipsa unui mecanism de loop closure, specific abo
 Cartographer prezentat în @cartographer este o soluție bazată pe grafuri, capabilă de reprezentare atât bidimensională cât și tridimensională a mediului înconjurător.
 Spre deosebire de metodele menționate înainte, aceasta este o variantă mult mai complexă și completă.
 Acesta este împărțit în două module separate: unul care realizează un SLAM local, în front-end, și unul care realizează un SLAM global, în back-end.
-Principiul de funcționare constă în realizarea de subhărți care apoi sunt suprapuse între ele  și se realizează etapa de SLAM global.
+Principiul de funcționare constă în realizarea de subhărți care apoi sunt suprapuse între ele și se realizează etapa de SLAM global.
 Mai exact, sistemul aliniază scanări consecutive pentru a construi subhărți. 
-O măsurătoare este inserată conform alogritmului de optimizare nonliniar Ceres scan matching, care caută poziția optimă care maximizează probabilitatea ca punctele detectate de LiDAR să se potrivească cu structurile subhărții. @cartographer
+O măsurătoare este inserată conform algoritmului de optimizare neliniar Ceres scan matching, care caută poziția optimă care maximizează probabilitatea ca punctele detectate de LiDAR să se potrivească cu structurile subhărții. @cartographer
 Acesta este un proces precis când este vorba de distanțe scurte, dar acumulează erori pe termen lung.
 
 Din acest motiv, are loc etapa de SLAM global, care presupune optimizarea unui graf format din pozițiile și subhărțile estimate la faza locală. @cartographer
@@ -244,8 +246,8 @@ Precum majoritatea soluțiilor recente, SLAM Toolbox este o soluție de tip de o
 Vine cu mai multe avantaje față de alte metode.
 În primul rând, este o metodă concepută cu ideea de a putea continua o hartă în cursul a mai multor sesiuni.
 Acest lucru se realizează prin salvarea atât a datelor brute, cât și a grafului de poziții.
-Acestea pot sa fie serializate și deserializate pentru a putea continua cartografierea pe parcursul mai multor sesiuni.
-SLAM Toolbox introduce și o componentă care permite utilizatorului să intervină asupra nodurilor din graf, lucru care poate ajuta, de exemplu la inchideri de bucle.
+Acestea pot să fie serializate și deserializate pentru a putea continua cartografierea pe parcursul mai multor sesiuni.
+SLAM Toolbox introduce și o componentă care permite utilizatorului să intervină asupra nodurilor din graf, lucru care poate ajuta, de exemplu la închideri de bucle.
 
 Vine cu mai multe moduri de utilizare @Macenski2021: unul asincron care este conceput pentru a crea hărți cât mai corecte, fără considerente de timp, având un buffer care stochează toate măsurătorile pentru a fi procesate în totalitate, un mod sincron care prioritizează performanțele în timp real în detrimentul calității mai ridicate a hărții și un mod destinat navigării în cadrul unei hărți deja cunoscute, fără a mai interveni permanent asupra acesteia.
 Pentru a realiza ultimul mod, se folosește un buffer rotativ care menține măsurătorile curente, care sunt adăugate grafului permanent, în forma unor noi constrângeri și poziții. 
@@ -261,9 +263,9 @@ Topic-urile sunt cele mai folosite și au un comportament de tip subscriber-publ
 Service-urile sunt un mecanism de tip request-reply, iar action-urile sunt orientate spre rezultat, și oferă feedback constant.
 
 Într-un sistem dezvoltat pe ROS 2 există trei sisteme de referință importante pentru localizare în cadrul roboților autonomi.
-Primul dintre acestea base_link, care este atașat bazei robotului, și poate fi văzut ca fiind un cadru local.
+Primul dintre acestea, base_link care este atașat bazei robotului, și poate fi văzut ca fiind un cadru local.
 Celelalte două sunt sisteme de referință globale, odom și map.
-Poziția unui robot în cadrul odom trebuie să fie mereu continuă, motiv pentru care acesta va suferi de drift-uri ale poziții, adică estimarea poziției robotului va acumula erori.
+Poziția unui robot în cadrul odom trebuie să fie mereu continuă, motiv pentru care acesta va suferi de drift-uri ale poziției, adică estimarea poziției robotului va acumula erori.
 Pentru a rezolva această problemă, există sistemul map care acceptă salturi ale poziției cu scopul de a corecta localizarea robotului.
 Datorită structurii arborescente în care un cadru poate avea un singur sistem părinte, nu există o legătură directă între map și odom.
 Din acest motiv, pentru a obține transformarea între sistemele de referință care permite vizualizarea corectă a rezultatelor, trebuie calculată următoarea transformare între map și odom:
@@ -285,9 +287,9 @@ $ <eq:htm>
 Pentru componenta de scan matching a fost folosită biblioteca small_gicp @small_gicp care pune la dispoziție mai multe implementări eficiente de algoritmi precum ICP, Point to Plane ICP, GICP din punct de vedere al timpului de execuție.
 
 Pentru implementare a fost ales GICP @gicp în detrimentul altor variante tip ICP.
-Aceasta înglobează atât cazul point to point și cel point to plane în același cadru probabilistic, efectiv devenind o abordare plan to plane.
+Aceasta înglobează atât cazul point to point și cel point to plane în același cadru probabilistic, efectiv devenind o abordare plane to plane.
 GICP oferă mai multă robustețe și acuratețe în alinierea mulțimilor de puncte față de ICP.
-Dacă ICP caută sa minimizeze distanța între punctele corespunzătoare, GICP utilizează informații legate de structura suprafețelor, având asociate matrici de covarianță pentru fiecare punct.
+Dacă ICP caută să minimizeze distanța între punctele corespunzătoare, GICP utilizează informații legate de structura suprafețelor, având asociate matrici de covarianță pentru fiecare punct.
 Algoritmul devine mai rezistent la zgomot și oferă rezultate mai precise. @gicp
 
 În urma măsurătorilor obținute de la LiDAR, se obțin mai multe distanțe, fiecare corespunzătoare unui unghi în care a fost trimis fasciculul de lumină.
@@ -302,13 +304,13 @@ unde:
 - $r_i$ este distanța la care s-a observat un obstacol
 - $theta_i$ este unghiul la care s-a observat obstacolul
 
-Totuși, un senzor LiDAR nu achiziționează datele în același moment de timp, ci măsoară distanțele pe parcursul unei rotații complete, intr-un interval de timp.
+Totuși, un senzor LiDAR nu achiziționează datele în același moment de timp, ci măsoară distanțele pe parcursul unei rotații complete, într-un interval de timp.
 Din această cauză, dacă robotul se deplasează, fasciculele trimise vor fi capturate dintr-o poziție și orientare deplasate față de locația originală. @Zhang-RSS-14
-Dacă punctele sunt tratate ca și când au fost măsurate in același timp, atunci setul de puncte va fi puțin distorsionat de mișcarea robotului, lucru care va duce la hărți mai puțin precise și care nu corespund in totalitate cu realitatea.
+Dacă punctele sunt tratate ca și când au fost măsurate în același timp, atunci setul de puncte va fi puțin distorsionat de mișcarea robotului, lucru care va duce la hărți mai puțin precise și care nu corespund în totalitate cu realitatea.
 O metodă folosită pentru eliminarea distorsiunii este interpolarea liniară de poziții. @Zhang-RSS-14
 
-Pentru a corecta distorsiunea, fiecărui fascilul îi este asociat momentul de timp de achiziție $t_i$.
-Poziția se poate obține prin interpolarea liniară între cele două estimări, de la momentele de timp $t_a$ și $t_b$, momentele de timp estimării de dinaintea fascilului și a celei de după: 
+Pentru a corecta distorsiunea, fiecărui fascicul îi este asociat momentul de timp de achiziție $t_i$.
+Poziția se poate obține prin interpolarea liniară între cele două estimări, de la momentele de timp $t_a$ și $t_b$, momentele de timp ale estimării de dinaintea fasciculului și a celei de după:
 $
 x_i = x_a + alpha (x_b - x_a), \
 y_i = y_a + alpha (y_b - y_a), \
@@ -335,7 +337,7 @@ Pentru aceasta s-a ales algoritmul lui Bresenham.
 
 
 Pentru reprezentarea hărții a fost aleasă reprezentarea sub forma unui occupancy grid, o matrice care reprezintă mediul în care se află robotul.
-S-a ales o rezoluție a hărții de 5 cm, ceea ce înseamnă ca o celula a matricii reprezintă 25 $"cm"^2$.
+S-a ales o rezoluție a hărții de 5 cm, ceea ce înseamnă că o celula a matricii reprezintă 25 $"cm"^2$.
 
 Pentru a găsi celula corespunzătoare unei anumite poziții se folosesc relațiile:
 $
@@ -368,7 +370,7 @@ Pentru a evalua rezultatele obținute vor fi analizate atât traiectoria obținu
 
 Pentru evaluarea traiectoriilor și pozițiilor obținute a fost folosit utilitarul Evo @grupp2017evo care permite trasarea și compararea celor 2 traiectorii, cea estimată și cea reală.
 Pentru această comparație se vor folosi două metrici Relative Pose Error (RPE) și Absolute Trajectory Error (ATE).
-Acestea sunt definite în @sturm2012 in felul următor:
+Acestea sunt definite în @sturm2012 în felul următor:
 
 - $"RPE"$:
 
@@ -405,7 +407,7 @@ unde:
 - $S$ reprezintă transformarea între sistemele de coordonate ale referinței și a estimării
 - $F_i$ reprezintă ATE la momentul $i$
 
-ATE reprezintă o metrică globală care măsoară acuratețea intre traiectoria estimată și cea de referință.
+ATE reprezintă o metrică globală care măsoară acuratețea între traiectoria estimată și cea de referință.
 Pentru a măsura ATE pentru $n$ momente de timp, se va folosi valoarea RMSE:
 
 $ "RMSE"(F_(1:n)) := (
@@ -423,5 +425,5 @@ Proporția se referă la procentul de celule ocupate din hartă.
 Între 2 hărți ale aceluiași mediu, cea cu o proporție mai mare de celule ocupate va fi de o calitate mai scăzută deoarece obstacolele detectate vor fi mai groase pe hartă, semn că au existat fluctuații cu privire la poziția robotului.
 Similar, o hartă cu mai multe colțuri va fi probabil de o calitate mai mică deoarece acele colțuri suplimentare au fost probabil rezultatul unor artefacte din procesul de cartografiere.
 În final, o hartă cu mai multe spații închise va fi, de asemenea, cel mai probabil de o calitate mai mică deoarece acele spații detectate pot fi cauzate de erori de orientare sau poziționare sau chiar închideri deficitare de bucle. @benchmark2017
-Pentru implementarea acestei componente a fost folosită biblioteca OpenCV @opencv_library care pune la dispoziție implementări consacrate ale operațiilor descrise în @benchmark2017 pentru o efieciență maximă.
-Aceastea se aplică hărții obținute care este după tratată ca o imagine și se pot extrage trăsăturile dorite din aceasa.
+Pentru implementarea acestei componente a fost folosită biblioteca OpenCV @opencv_library care pune la dispoziție implementări consacrate ale operațiilor descrise în @benchmark2017 pentru o eficiență maximă.
+Acestea se aplică hărții obținute care este apoi tratată ca o imagine și se pot extrage trăsăturile dorite din aceasta.

@@ -87,7 +87,7 @@
   //              and provide a GitHub Action template for broader CI adoption."
 
 Soluția dezvoltată a înregistrat performanțe bune atât din punct de vedere structural cât și din perspectiva estimărilor traiectoriei.
-În urma evaluării, în toate mediile de simulare, cu ambele configurări ale soluției s-au înregistrat erori reduse, atât la nivel local, între pozițiile înregistrate, valoare RMSE RPE fiind, procentual, mai mici de 0.09% pentru ambele variante ale sistemului.
+În urma evaluării, în toate mediile de simulare, cu ambele configurări ale soluției s-au înregistrat erori reduse, atât la nivel local, între pozițiile înregistrate, valorile RMSE ale RPE fiind, procentual, mai mici de 0.09% pentru ambele variante ale sistemului.
 Din punct de vedere global, potrivirea între traiectoriile estimate și referințe prezintă valori RMSE ATE mai mici de 0.1%.
 Analizând hărțile obținute se poate afirma faptul că ambele variante produc hărți corespunzătoare ale mediului în care se află robotul.
 
@@ -105,12 +105,12 @@ Rotațiile sunt mult mai periculoase pentru acuratețea sistemului față de tra
 Acest lucru se datorează faptului că o eroare oricât de mică duce la distorsiuni foarte mari cu cât crește distanța.
 Acest lucru este exacerbat dacă rotațiile se petrec cu o viteză unghiulară mai mare.
 Specific soluției prezentate, rotațiile pure nu oferă foarte multe informații cu privire la translație.
-Astfel in urma scan matching-ului apar nealinieri care produc rezultate greșite, fie cu privire la orientare sau poate chiar la poziție. 
+Astfel în urma scan matching-ului apar nealinieri care produc rezultate greșite, fie cu privire la orientare sau poate chiar la poziție.
 Acest aspect a dus și la defectele prezentate de hărțile celui de-al doilea mediu.
-Adaugarea unui EKF pare să fi ameliorat această problemă, dând o primă estimare mult mai adecvată și robustă față de datele brute.
+Adăugarea unui EKF pare să fi ameliorat această problemă, dând o primă estimare mult mai adecvată și robustă față de datele brute.
 
-Cea mai mare limitare a sistemului este legată de lipsa unui back end care să permită și corecția traiectoriei din trecut.
-Decizia de a exclude aceasta componentă de detecție a buclelor și de optimizarea grafurilor a fost luată pentru a aduce o soluție care prezintă o complexitate mai mică, pentru a putea fi rulată pe mai multe sisteme.
+Cea mai mare limitare a sistemului este legată de lipsa unui back-end care să permită și corecția traiectoriei din trecut.
+Decizia de a exclude această componentă de detecție a buclelor și de optimizarea grafurilor a fost luată pentru a aduce o soluție care prezintă o complexitate mai mică, pentru a putea fi rulată pe mai multe sisteme.
 Bineînțeles, această decizie a dus inevitabil la imposibilitatea de a corecta traiectoria pe parcursul explorării, deși abordarea de scan-to-map matching ajută la ameliorarea efectului.
 
 Alte limitări vizează mediul de testare din simulator.
@@ -126,6 +126,6 @@ Aceasta poate fi înlocuită sau măcar calculul poate fi vectorizat pentru a ef
 De asemenea, în cazul în care se implementează o componentă de detecție și închidere a buclelor, va trebui analizat impactul real al celor 2 treceri prin scan-matching pentru a corecta și reduce distorsiunile provenite de la senzorul de LiDAR.
 Această componentă poate deveni redundantă într-un astfel de sistem și este posibil să reprezinte o execuție în plus care doar consumă resurse fără un câștig prea mare.
 
-Altă direcție care poate fi explorată este paralelizarea unor componente, pentru obținerea unor performanțe mai bune in timp real. 
+Altă direcție care poate fi explorată este paralelizarea unor componente, pentru obținerea unor performanțe mai bune în timp real.
 În acest fel, soluția va răspunde mai bine la medii mai mari, cu mai multe trăsături și traiectorii complexe.
-Componenta de scan matching este potrivită pentru paralelizare, fiind relativ izolată de celelalte componente și in aceasta nu se riscă apariția unor probleme de sincronizare care să duca la rezultate eronate.
+Componenta de scan matching este potrivită pentru paralelizare, fiind relativ izolată de celelalte componente și în aceasta nu se riscă apariția unor probleme de sincronizare care să ducă la rezultate eronate.

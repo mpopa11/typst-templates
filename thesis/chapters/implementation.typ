@@ -113,7 +113,7 @@ Bineînțeles, această decizie a venit cu principalul dezavantaj, anume faptul 
 Cea mai importantă parte a sistemului este componenta de scan matching.
 Dacă algoritmul de GICP a fost ales pentru faptul că îmbină ambele abordări de ICP, point to point și point to map, în același cadru probabilistic, oferind de asemenea o robustețe și o precizie mai ridicată, biblioteca de small_gicp a fost aleasă pentru viteza superioară față de alte biblioteci precum PCL.
 
-Pentru a implementa componenta de EKF pentru estimarea poziției a fost ales folosirea pachetului robot_localization @robot_localization.
+Pentru a implementa componenta de EKF pentru estimarea poziției a fost aleasă folosirea pachetului robot_localization @robot_localization.
 Acesta oferă o implementare a unui nod cu un EKF, configurabil, pentru a putea fuziona datele senzorilor, în orice configurație dorită de către utilizator.
 
 == 4.2 Structuri de date
@@ -126,7 +126,7 @@ Acest lucru nu vine cu foarte multe dezavantaje, fiind vorba doar de o matrice, 
 Operațiile de actualizare a matricei se folosesc de array-uri NumPy, deci aceste operații sunt vectorizate și se realizează eficient și nu produc probleme de performanță.
 Pentru aceasta s-a ales ca harta să fie dimensionată la 30 x 30 m.
 Pentru un grad suficient de detalii și pentru a păstra performanțele sistemului la un nivel bun a fost aleasă o rezoluție de 0.05, ceea ce înseamnă că matricea care reprezintă harta mediului este o matrice pătratică de 600 x 600 celule, ceea ce nu prezintă o problemă pentru majoritatea sistemelor.
-Matricea este centrată astfel încât originea sistemului de coordate map să corespundă centrului matricei.
+Matricea este centrată astfel încât originea sistemului de coordonate map să corespundă centrului matricei.
 
 Modul de reprezentare a stărilor celulelor este cel bazat pe log-odds.
 A fost aleasă această abordare pentru a putea cuantifica impactul fiecărei scanări într-un mod care să permită cuantizarea informației cât mai corespunzător.
@@ -145,14 +145,14 @@ Buffer-ul este implementat sub formă de deque (double ended queue) deoarece ofe
 == 4.3 Estimarea poziției
 
 Primul pas al soluției este estimarea poziției actuale, sub forma unei predicții. 
-Din motiv că datele primite, fie de la senzori, sau de la nodul de EKF nu se află în același sistem de coordonate, la fiecare poziție nou primită se calculează diferența între ultima poziție primită și cea actuală pentru a putea estima mișcarea. 
+Întrucât datele primite, fie de la senzori, sau de la nodul de EKF nu se află în același sistem de coordonate, la fiecare poziție nou primită se calculează diferența între ultima poziție primită și cea actuală pentru a putea estima mișcarea. 
 Cu această estimare a mișcării, se poate crea o primă predicție a poziției, fiind aplicată ultimei estimări primite de la componenta de scan matching.
 Aceasta va fi poziția care va fi folosită inițial în restul soluției până se ajunge la etapa de scan matching, care va furniza o ultimă estimare a poziției.
 
 Datele brute de la LiDAR sunt primite sub forma unor distanțe, fiecare corespunzătoare unui unghi spre care a fost trimis fasciculul de lumină.
 Sunt eliminate valorile care nu se află în plaja de valori a senzorului de LiDAR, în cazul robotului TurtleBot3 Burger, plaja de valori este $[0.12 m, 3.5 m] $.
 Pentru fiecare fascicul este calculat unghiul corespunzător, cunoscând unghiul minim la care emite senzorul, precum și incrementul de unghi și indexul valorii în șirul primit de la senzor.
-Acestea sunt transformate in coordonate cu ajutorul @eq:point_cloud.
+Acestea sunt transformate în coordonate cu ajutorul @eq:point_cloud.
 Din moment ce senzorul nu se află în centrul robotului, punctele obținute primesc o corecție de poziție care corespunde transformării de la planul robotului la cel al senzorului.
 
 Din moment ce senzorul se rotește pentru a obține toate măsurătorile, în timpul deplasării apare o mică distorsiune.
@@ -165,24 +165,24 @@ Căutarea se realizează folosind funcția din numpy searchsorted care localizea
 După ce se obține poziția, fiecare punct este transformat din sistemul de referință al robotului în sistemul global, după care se revine în sistemul de referință al robotului, astfel eliminându-se distorsiunea cauzată de mișcare.
 
 Componenta principală a sistemului este componenta de scan matching, care aliniază setul de puncte obținut de la LiDAR cu harta care a fost creată până în acel moment.
-Harta se reconstruiește prin extragerea din occupancy grid-ul care a fost construit la iterația trecută a celulelor care conțin valori mai mari decât 1, valoare aleasă pentru a putea extrage suficiente puncte pentru a avea un set suficient de mare de puncte pentru a obține rezultate corecte in urma scan matching-ului.
+Harta se reconstruiește prin extragerea din occupancy grid-ul care a fost construit la iterația trecută a celulelor care conțin valori mai mari decât 1, valoare aleasă pentru a putea extrage suficiente puncte pentru a avea un set suficient de mare de puncte pentru a obține rezultate corecte în urma scan matching-ului.
 
 Punctele din ambele seturi sunt preprocesate înainte de a se face alinierea.
 Acestea trec printr-o etapă de subeșantionare la o rezoluție de 0.025 m pentru uniformizarea punctelor și pentru a accelera alinierea efectivă.
 Alinierea se face folosind GICP, care este configurat să accepte o distanță maximă de corespondență de 0.2 m și maxim 15 iterații pentru a converge.
-Rezultatul este poziția reală a robotului, doar dacă poziția rezultată nu diferă prea mult de cea estimată. Dacă diferența între predicția făcută la început și cea din urma etapei de scan matching este mai mare de 0.2 m sau orientarea diferă cu 0.09 radiani, adică aproximativ 5 grade, estimarea poziției rămâne predicția de la inceputul procesului.
+Rezultatul este poziția reală a robotului, doar dacă poziția rezultată nu diferă prea mult de cea estimată. Dacă diferența între predicția făcută la început și cea din urma etapei de scan matching este mai mare de 0.2 m sau orientarea diferă cu 0.09 radiani, adică aproximativ 5 grade, estimarea poziției rămâne predicția de la începutul procesului.
 
-După prima aliniere, în cazul in care a fost acceptată, folosind poziția nou estimată, se reconstruiește setul de puncte în aceeași modalitate ca înainte, se reface interpolarea pozițiilor și se obține un nou set de puncte, care va fi apoi aliniat contra setului precedent, corespunzător primei interpolări liniare.
+După prima aliniere, în cazul în care a fost acceptată, folosind poziția nou estimată, se reconstruiește setul de puncte în aceeași modalitate ca înainte, se reface interpolarea pozițiilor și se obține un nou set de puncte, care va fi apoi aliniat față de setul precedent, corespunzător primei interpolări liniare.
 
-Scopul acestei a doua etape de scan matching este de a obține o poziție mai exactă, așa că etapa de GICP este configurată să fie mult mai strictă comparativ cu prima, anume: distanța maximă de corespondență nu trebuie să depășească mai mult de 0.1 m și algoritmul trebuie sa conveargă în cel mult 10 iterații.
+Scopul acestei a doua etape de scan matching este de a obține o poziție mai exactă, așa că etapa de GICP este configurată să fie mult mai strictă comparativ cu prima, anume: distanța maximă de corespondență nu trebuie să depășească mai mult de 0.1 m și algoritmul trebuie să conveargă în cel mult 10 iterații.
 Rezultatul este din nou comparat cu predicția, însă de data aceasta trebuie să îndeplinească niște criterii mai stricte: translație sub 0.1 m și rotație de maxim 0.05 radiani, aproximativ 3 grade.
 Dacă trece și de aceste criterii, noua poziție devine estimarea finală a sistemului și în baza acesteia se actualizează harta.
 
-Valorile din interiorul occupancy grid-ului sunt apoi transformate in probabilități folosind @eq:log-odds.
+Valorile din interiorul occupancy grid-ului sunt apoi transformate în probabilități folosind @eq:log-odds.
 În funcție de probabilități, conținutul hărții este transformat pentru ca harta să poată fi apoi vizualizată corespunzător, în funcție de probabilitatea de a fi ocupată.
 Astfel, celulele cu o probabilitate mai mare de 70% primesc valoarea 100, corespunzătoare statusului de ocupată, cele cu probabilități mai mici de 20% primesc valoarea 0, libere și cele cu probabilități între aceste praguri primesc valoarea -1, echivalente stării de necunoscut. 
 S-a ales ca valorile hărții să nu fie transmise mai departe sub forma de probabilități pentru a ușura interpretarea și vizualizarea hărții rezultate.
-Dacă se păstrau probabilitățile și se scalau să se afle in plaja de valori acceptată de mesajul care trebuie trimis (0-100), apărea un efect de gradient pe hartă, lucru care putea crea anumite probleme în viitor, de pildă la planificarea rutelor.
+Dacă se păstrau probabilitățile și se scalau să se afle în plaja de valori acceptată de mesajul care trebuie trimis (0-100), apărea un efect de gradient pe hartă, lucru care putea crea anumite probleme în viitor, de pildă la planificarea rutelor.
 
 == 4.4 Configurare EKF
 
@@ -194,7 +194,7 @@ Are două roți, fiecare controlată individual de către un motor.
 Acesta se rotește prin aplicarea unor comenzi diferite fiecărui motor, dacă se dorește ca acesta să își schimbe orientarea se vor transmite comenzi opuse roților, sensul de rotație fiind dat de motorul care primește comanda negativă.
 Din această cauză, robotul se va deplasa mereu pe axa OX locală, indiferent de direcția de deplasare privită din sistemul de coordonate global.
 
-De asemenea, fiind vorba de un mediu fără schimbări de altitudine, filtrul este setat să funcționeze în modul bidimensional (two_d_mode: true), astfel sunt forțate ca valorile axei Z, a unghiurilor de roll și pitch să fie 0.
+De asemenea, fiind vorba de un mediu fără schimbări de altitudine, filtrul este setat să funcționeze în modul bidimensional (two_d_mode: true), astfel sunt forțate ca valorile axei Z, ale unghiurilor de roll și pitch să fie 0.
 Aceasta duce la o robustețe mai mare, împiedicând filtrul să estimeze poziții care nu sunt posibile fizic vorbind în constrângerile mediului.
 
 Cu aceste considerente au fost alese informațiile care vor fi luate în considerare de filtru pentru estimarea poziției.
@@ -202,9 +202,9 @@ Se pot prelua de la fiecare sursă informații cu privire la: poziția și orien
 Pe parcursul configurării s-au testat mai multe posibile combinații ale surselor de informație.
 Varianta finală la care s-a ajuns este cea în care se fuzionează viteza liniară pe axa X, $v_x$, viteza unghiulară în jurul unghiului yaw, $v_"yaw"$ provenite de la senzorii odometrici ai roților și viteza unghiulară în jurul unghiului yaw provenită de la unitatea inerțială.
 Includerea accelerațiilor nu s-a dovedit a aduce un impact pozitiv asupra rezultatelor.
-Experimental s-a observat că includerea unghiului yaw provenit de la IMU, care ar fi trebuit să ofere cea mai bună estimarea a orientării robotului a avut un impact negativ în estimarea poziției.
+Experimental s-a observat că includerea unghiului yaw provenit de la IMU, care ar fi trebuit să ofere cea mai bună estimare a orientării robotului a avut un impact negativ în estimarea poziției.
 
-Problema prezentată de utilizarea valorilor efective ale poziției și orientării constă in faptul că estimările efective primite sunt calculate pe principiul de dead-reckoning, integrarea vitezelor înregistrate, ceea ce duce la o inevitabilă acumulare a erorilor în urma integrării; vitezele în schimb sunt fiabile pentru a obține o estimare bună în urma EKF.
+Problema prezentată de utilizarea valorilor efective ale poziției și orientării constă în faptul că estimările efective primite sunt calculate pe principiul de dead-reckoning, integrarea vitezelor înregistrate, ceea ce duce la o inevitabilă acumulare a erorilor în urma integrării; vitezele în schimb sunt fiabile pentru a obține o estimare bună în urma EKF.
 
 Pentru a proteja estimarea de valorile aberante a fost introdusă o constrângere bazată pe distanța Mahalanobis, conform căreia se va respinge o măsurătoare în cazul în care sunt depășite 15 deviații standard.
 Dacă sunt furnizate valori de către senzori care diferă prea mult de comportamentul așteptat, acestea sunt ignorate.
@@ -227,25 +227,25 @@ Inițial, a fost planificată implementarea acestei componente într-o manieră 
 Prima problemă întâmpinată are legătură cu faptul că setul de puncte era prea dens și nu se detecta mișcarea.
 Din acest motiv a fost introdusă etapa de subeșantionare, care a produs seturi de puncte care să poată fi aliniate corect.
 
-Altă problemă, fundamentală este faptul că în această abordare, in urma scan matching-ului, se obține o transformare care reprezintă cât s-a deplasat robotul între cele două seturi de puncte.
+Altă problemă, fundamentală este faptul că în această abordare, în urma scan matching-ului, se obține o transformare care reprezintă cât s-a deplasat robotul între cele două seturi de puncte.
 Această abordare nu este cu nimic fundamental diferită de abordarea de dead-reckoning.
 Erorile apărute la fiecare etapă de ICP sunt acumulate și poziția se pierde destul de repede.
-Se ajungea și în cazul în care când robotul stătea oprit, seturile de puncte nu erau tocmai identice, rezultând o transformare mică între seturi, care se acumula, și poziția estimată se deplasa pe când robotul nu o făcea în realitate.
-Schimbarea algoritmului in varianta de Point to Plane ICP nu a ajutat pentru a rezolva problema.
+Se ajungea și în cazul în care, când robotul stătea oprit, seturile de puncte nu erau tocmai identice, rezultând o transformare mică între seturi, care se acumula, și poziția estimată se deplasa pe când robotul nu o făcea în realitate.
+Schimbarea algoritmului în varianta de Point to Plane ICP nu a ajutat pentru a rezolva problema.
 
-Singura soluție a fost trecerea la o abordare de tip scan to map matching, în care se compară setul de puncte cu intreaga hartă pentru a putea fi obținută o estimare corectă.
-În acest caz, in urma scan matching-ului se va obține poziția robotului în cadrul sistemului global de referință.
+Singura soluție a fost trecerea la o abordare de tip scan to map matching, în care se compară setul de puncte cu întreaga hartă pentru a putea fi obținută o estimare corectă.
+În acest caz, în urma scan matching-ului se va obține poziția robotului în cadrul sistemului global de referință.
 Acest aspect a dus la nevoia de refactorizare a celorlalte componente ale sistemului.
 Algoritmul ales pentru aceasta a fost GICP, din motivele discutate anterior.
 
 După aceasta problemele nu au mai fost la fel de grave, din perspectiva funcționării sistemului, acestea două fiind principalele probleme care au împiedicat obținerea oricărui fel de rezultat pozitiv.
 
-Alte probleme mai serioase au fost cele care au apârut în momentul in care a fost adăugat nodul de EKF, deoarece cu toate solutiile anterioare, poziția estimată tot nu era stabilă și era predispusă erorilor, lucru care ducea inevitabil la hărți de o calitate mai scăzută.
+Alte probleme mai serioase au fost cele care au apărut în momentul în care a fost adăugat nodul de EKF, deoarece cu toate soluțiile anterioare, poziția estimată tot nu era stabilă și era predispusă erorilor, lucru care ducea inevitabil la hărți de o calitate mai scăzută.
 
-Inițial rezultatele cu nodul de EKF nu era cu nimic mai bune, poate chiar mai slabe calitativ, lucru care s-a dovedit a se datora lipsei covarianțelor pentru mesajele de la senzorii odometrici, ceea ce facea modelul să considere că măsurătorile primite erau perfecte, lucru care afecta masiv performanțele.
+Inițial rezultatele cu nodul de EKF nu erau cu nimic mai bune, poate chiar mai slabe calitativ, lucru care s-a dovedit a se datora lipsei covarianțelor pentru mesajele de la senzorii odometrici, ceea ce făcea modelul să considere că măsurătorile primite erau perfecte, lucru care afecta masiv performanțele.
 Adăugarea unor covarianțe a dus la rezolvarea problemei și la posibilitatea de configurare corespunzătoare a nodului responsabil de EKF.
 
 O ultimă problemă specifică a fost existența distorsiunii cauzate de mișcarea robotului în măsurătorile senzorului de LiDAR.
 Cu toate că efectele erau cel mai puțin grave dintre cele menționate, hărțile rezultate aveau probleme vizibile, mai ales cu privire la grosimea obstacolelor în reprezentarea de pe hartă.
-Acestea sunt datorate fix distorsiunilor din setul de puncte care se propagă după atât în hartă cât și în poziția robotului.
+Acestea sunt datorate fix distorsiunilor din setul de puncte care se propagă apoi atât în hartă cât și în poziția robotului.
 Componenta de distorsiune folosind interpolarea liniară a fost soluția care a rezolvat această problemă.

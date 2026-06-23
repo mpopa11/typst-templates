@@ -127,4 +127,4 @@ Acest stil de dezvoltare impus de un sistem bazat pe ROS 2 duce la soluții modu
 Din această cauză, a fost creată și o versiune care are scopul de a analiza impactul estimării produse de către nodul EKF, comparativ cu datele brute obținute direct de la senzori.
 
 În capitolul următor va fi detaliat procesul de implementare și comportamentul detaliat al fiecărei componente prezentate anterior, pornind de la procesarea datelor, componenta de scan matching și actualizarea hărții.
-Pe lângă implementarea propriu zisă vor fi explicate problemele întâlnite pe parcurs, precum și soluțiile și compromisurile care au fost luate pe parcursul dezvoltării soluției.
+Pe lângă implementarea propriu-zisă vor fi explicate problemele întâlnite pe parcurs, precum și soluțiile și compromisurile care au fost luate pe parcursul dezvoltării soluției.
