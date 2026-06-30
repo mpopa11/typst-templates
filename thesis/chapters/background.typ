@@ -372,6 +372,8 @@ Pentru evaluarea traiectoriilor și pozițiilor obținute a fost folosit utilita
 Pentru această comparație se vor folosi două metrici Relative Pose Error (RPE) și Absolute Trajectory Error (ATE).
 Acestea sunt definite în @sturm2012 în felul următor:
 
+#pagebreak()
+
 - $"RPE"$:
 
 $ E_i := (Q_i^(-1) Q_(i + Delta))^(-1) (P_i^(-1) P_(i + Delta)) $ <eq:rpe>
