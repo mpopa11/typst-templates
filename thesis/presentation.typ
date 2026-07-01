@@ -111,12 +111,13 @@
 
 - Roboți mobili autonomi.
 
-- Navigatie autonoma, indiferent de scop.
+- Navigație autonomă, indiferent de scop.
 
 - Unde se află robotul? Cum cunoaște mediul?
 
 #speaker-note[
-  De-a lungul timpului, tendința dominantă a fost mereu cea de automatizarea a activităților omului. În acest context, au fost dezvoltate diferite metode pentru a putea ușura munca omului, ajungând, în cele din urmă la dezolvoltarea sistemelor automate clasice. Spre deosebire de acestea, se remarcă roboții autonomi, care trebuie să fie capabili să ia decizii în baza informațiilor din mediu de unii singuri, fără intervenția operatorului uman. Indiferent de sarcina lor, aceștia trebuie să poată naviga în siguranță în mediul în care se află. Astfel se remarcă necesitatea ca robotul mobil autonom să cunoască mediul înconjurător și să se poată plasa în acesta.
+  De-a lungul timpului, tendința dominantă a fost cea de automatizare a activităților omului. În acest context, au fost dezvoltate diferite metode, ajungând, în cele din urmă, la dezvoltarea sistemelor automate clasice.
+  Spre deosebire de acestea, se remarcă roboții autonomi, care trebuie să fie capabili să ia decizii în baza informațiilor din mediu de unii singuri, fără intervenția operatorului uman. Indiferent de sarcina lor, aceștia trebuie să poată naviga în siguranță în mediul în care se află. Astfel se remarcă necesitatea ca robotul să cunoască mediul înconjurător și să se poată plasa în acesta.
 
 ]
 
@@ -137,7 +138,9 @@
 - Resurse limitate?
 
 #speaker-note[
-  
+  În acest context, putem defini problema principală care a fost adresată, anume cea de SLAM. Putem spune că este compusă din două subprobleme: localizarea robotului și cartografierea mediului. Aceste probleme sunt profund interdependente, lucru care aduce un alt grad de dificultate.
+  Soluțiile evidente, precum utilizarea GPS nu sunt viabile în majoritatea cazurilor, unde este nevoie de o precizie ridicată, indiferent de condiții.
+  Un alt aspect care trebuie luat în considerare este că un robot autonom nu dispune de multe resurse de calcul, deci orice soluție trebuie să gestioneze și acest aspect.
 ]
 
 == #slide-title("Importanța problemei", "Why Is This Important?")
@@ -153,7 +156,9 @@
 - SLAM Toolbox.
 
 #speaker-note[
-  This problem is important to solve because secure communication and data protection are critical in today's digital world, and efficient hardware accelerators can enable faster and more secure with higher throughput applications. Some hardware accelerators exist, but they are often proprietary, expensive, or not optimized for RISC-V. Solving this problem can have a significant impact on the performance and security of applications that rely on cryptographic functions, as well as on the adoption of RISC-V.
+  Obținerea unei hărți fidele mediului este profund dependentă de estimarea corectă a poziției în care se află robotul, deoarece toate măsurătorile vor depinde de locația robotului la acel moment. 
+  Pentru asta au fost dezvoltate mai multe soluții de-a lungul timpului, de la soluții bazate pe filtrare probabilistică precum Gmapping, la cele bazate pe scan matching precum HectorSLAM sau cele bazate pe optimizarea grafurilor, cea mai folosită clasă de soluții la momentul actual, precum Cartographer și SLAM Toolbox.
+  Primele două clase de soluții sunt mai simple conceptual dar nu pot corecta ulterior estimările deja făcute pentru o precizie mai mare, în timp ce cele bazate pe optimizarea grafurilor vin cu un cost computațional și o complexitate mult mai ridicate.
 ]
 
 // ------------------------------------------------------------
@@ -164,7 +169,7 @@
 
 == #slide-title("Prezentare generală a soluției", "Solution Overview")
 
-- SLAM bidemensional bazat pe *scan-matching*.
+- SLAM bidimensional bazat pe *scan-matching*.
 
 - LiDAR $+$ odometria roților $+$ IMU.
 
@@ -174,7 +179,8 @@
 
 
 #speaker-note[
-  The proposed solution is a novel hardware accelerator design for symmetric cryptographic functions on RISC-V. The key components of the solution include a custom instruction set extension for cryptographic functions, a hardware module for accelerating specific functions, and a software library for interfacing with the hardware. The main goal of the solution is to achieve high performance, low latency, low power consumption, and security against side-channel attacks.
+  Pentru aceasta propun o soluție bazată pe scan-matching, folosind senzorii de LiDAR, encoderele roților și IMU.
+  Pentru a păstra un cost redus de resurse nu se va integra componenta de închidere a buclelor. Potrivirea e scan-to-map cu GICP, iar harta e un occupancy grid. Opțional am adăugat un EKF pentru prima estimare.
 ]
 
 == #slide-title("Arhitectura sistemului", "System Architecture")
@@ -192,8 +198,7 @@
 - Actualizare hartă.
 
 #speaker-note[
-  The architecture of the proposed solution consists of RISC-V Rocket CPU with a custom instruction set extension for cryptographic functions, a hardware module that implements the specific functions, and a software library that provides an API for applications to use the hardware accelerator. The C++ software library uses RoCC assembly inline instuction and compare it with the software implementation of the same functions. The two-approach are tested on the same hardware platform emulated thourgh Verilator and using Proxy kernel.
-  ...
+ Sistemul a fost dezvoltat ca un sistem distribuit în ROS 2, comunicarea între componente, implementate în noduri se realizează folosind topic-uri, după un model de publisher-subscriber.
 ]
 
 #slide(config: config-store(header: none))[
@@ -203,8 +208,7 @@
   )
 
   #speaker-note[
-    The architecture of the proposed solution consists of RISC-V Rocket CPU with a custom instruction set extension for cryptographic functions, a hardware module that implements the specific functions, and a software library that provides an API for applications to use the hardware accelerator. The C++ software library uses RoCC assembly inline instuction and compare it with the software implementation of the same functions. The two-approach are tested on the same hardware platform emulated thourgh Verilator and using Proxy kernel.
-    ...
+    Aici putem vedea fluxul abstract al soluției. Pentru estimarea inițială a poziției, se vor folosi fie datele brute de la senzorii odometrici și IMU, fie o estimare primită de la EKF. Măsurătorile de la LiDAR trebuie să treacă printr-o etapă de procesare înainte să fie folosibile: se elimină măsurătorile din afara plajei de valori a senzorului, se construiește setul de puncte în baza unghiului și distanței la care se găsește un obstacol. Acest set de puncte trebuie după trecut printr-o etapă de eliminare a distorsiunii cauzate de mișcarea robotului. După acestea, se poate face etapa de scan matching, în urma căreia se obține estimarea finală a poziției și harta mediului.
   ]
 ]
 
@@ -226,17 +230,24 @@
 
 - ROS2 în Python.
 
-- Scan-matching : *GICP*  $arrow$ #text(weight: "bold", fill: rgb("#1f6feb"))[small_gicp].
+- Scan-matching: *GICP*  $arrow$ #text(weight: "bold", fill: rgb("#1f6feb"))[small_gicp].
 
 - EKF: *robot_localization*.
 
 - Hartă: *occupancy grid* rezoluție de 0.05.
 
-- Eliminarea distorsiuniilor LiDAR: interpolare liniară $+$ două etape de scan-matching.
+- Eliminarea distorsiunilor LiDAR: interpolare liniară $+$ două etape de scan-matching.
 
 
 #speaker-note[
-  The main implementation decisions I made include choosing RISC-V as the target architecture for the hardware accelerator, using Chisel as the hardware description language, and implementing the software library in C++. I chose RISC-V because it is an open and flexible architecture that allows for custom extensions. I chose Chisel because it is a powerful and expressive language for hardware design that integrates well with the RISC-V ecosystem (Rocket Chip + Chipyard). I implemented the software library in C++ because it is a widely used language for performance-critical applications and has good support for interfacing with hardware.
+  #text(size: 20pt)[
+  Pentru implementare a fost aleasă varianta implementării în Python în detrimentul C++ pentru a putea integra mai multe biblioteci și pentru un proces de dezvoltare mai simplu.
+  Pentru Scan-matching a fost aleasă biblioteca small_gicp care implementează mai mulți algoritmi de tip point cloud registration. A fost ales GICP în urma experimentelor cu mai mulți algoritmi.
+  Pentru  EKF, s-a folosit pachetul robot_localization care oferă posibilitatea de configurare a acestuia.
+  Harta este reprezentată sub forma de occupancy grid, care este o matrice, în care fiecare celulă este asociată unei suprafețe din mediu și stochează probabilitatea ca o celulă să fie ocupată.
+  Pentru compensarea distorsiunilor se interpolează liniar poziția între două estimări succesive, iar fiecare punct este corectat în funcție de momentul achiziției.
+  Se folosesc două etape de scan matching, o dată pornind de la estimarea primită inițial și după folosind poziția obținută după prima etapă pentru a obține un rezultat mai precis.
+  ]
 ]
 
 // ------------------------------------------------------------
@@ -291,7 +302,12 @@
 )
 
 #speaker-note[
-  The evaluation was conducted on a RISC-V Rocket CPU with the custom hardware accelerator implemented in Chisel. The software library was tested on the same hardware platform emulated through Verilator and using Proxy kernel. The benchmarks used for testing include a set of symmetric cryptographic functions and hash functions, such as AES and SHA-256, which were selected based on their relevance and common use in secure applications. The methodology for testing involved running each benchmark 1000 times under controlled conditions to ensure consistency and reliability of the results. The metrics used for evaluation include throughput (requests per second), latency (milliseconds), and resource utilization (CPU usage).
+  Experimentul a fost desfășurat în simulatorul Gazebo, folosind robotul TurtleBot3, un robot diferențial pe sistemul descris pe slide.
+  Datele din urma unei sesiuni au fost înregistrate pentru posibilitatea de reproducere a experimentului și pentru alte configurări ale soluției.
+  Se testează folosind 3 hărți de dimensiuni din ce în ce mai mari, cu din ce în ce mai multe obstacole și provocări și traiectorii care cresc în lungime.
+  Se evaluează calitatea estimării traiectoriei atât global (ATE) cât și local între 2 estimări consecutive (RPE) comparând cu traiectoria reală preluată din simulator.
+  Se evaluează calitatea structurală a hărții și prin metricile de proporție, număr de colțuri și spații închise, care cu cât sunt mai mici cu atât este mai bună o soluție în mod uzual.
+  Se studiază și impactul estimării inițiale provenite de la EKF.
 ]
 
 == #slide-title("Rezultate I", "Results I")
@@ -333,7 +349,9 @@
 
 
 #speaker-note[
-  The main experimental results show that the proposed hardware accelerator achieves a significant improvement in latency and throughput compared to the software implementation. For example, in Scenario 1, the latency was reduced from TODO ms to TODO ms, which is a TODO% improvement. In Scenario 2, the throughput increased from TODO req/s to TODO req/s, which is a TODO% improvement. These results are consistent with our expectations based on the design of the hardware accelerator and demonstrate the effectiveness of our solution.
+ Aici avem erorile traiectoriilor în cele 3 medii de testare. Se pot observa valori în general mai mici ale erorilor în cazul configurației cu EKF, însă doar în cazul celei de-a doua traiectorii se văd diferențe substanțiale.
+ Acest lucru denotă faptul că estimarea este dominată de scan-matching, nefiind la fel de influentă sursa primei estimări.
+ Erorile sunt de sub 0.1% ceea ce reprezintă o performanță bună.
 ]
 
 == #slide-title("Rezultate II", "Results II")
@@ -370,8 +388,8 @@
 ]
 
 #speaker-note[
-  In addition to the quantitative results, we also conducted a qualitative evaluation through a case study of how easy it is to integrate the proposed hardware accelerator into existing applications. The case study involved working with developers to understand their experiences and challenges when adopting the new technology. The insights gained from this evaluation include feedback on the integration process, performance improvements observed in real-world scenarios, and suggestions for further enhancements. These insights complement the quantitative results by providing a more holistic view of the solution's impact. ...
-  For other subjects, we could have conducted user studies or interviews to gather qualitative feedback on the usability and effectiveness of the solution on X people. The main results are ...
+  În acest tabel sunt prezentate metricile structurale ale hărților care vizează să detecteze instabilitatea poziției sau apariția erorilor, care vor duce la deplasarea reperelor din hartă, creând colțuri noi sau zone închise noi.
+  Performanțele tind să fie mai bune în cazul configurațiilor cu EKF, lucru care este din ce în ce mai evident pe măsură ce crește complexitatea și lungimea traiectoriei.
 ]
 
 // ------------------------------------------------------------
@@ -395,17 +413,31 @@
   "figures/tbe_world_ekf_1.png",
 )
 
+#speaker-note[
+  Aici sunt hărțile obținute pentru primul mediu de testare. 
+  Se observă rezultate bune în ambele cazuri, lucru care era de așteptat, deoarece harta este mai mică, cu puține provocări, fiind de asemenea vorba de o traiectorie mai scurtă pentru a testa performanțele de bază ale sistemului.
+]
+
 == #slide-title("Hărți rezultate — House", "Resulting Maps — House")
 #map-slide(
   "figures/tbe_house_no_ekf_1.png",
   "figures/tbe_house_ekf_1.png",
 )
 
+#speaker-note[
+  În acest caz sunt prezentate hărțile obținute pentru cel de-al doilea mediu, care vine cu o suprafață mai mare, și cel mai important, treceri între camere, care vin cu o dificultate mult mai mare în cazul sistemelor de scan matching, făcându-se trecere de la o zonă cunoscută unde există repere, la o nouă zonă care nu poate fi comparată la fel de bine cu restul hărții.
+  Se observă că EKF aduce o stabilitate mai mare din punct de vedere al orientării, fiind ameliorată eroarea din partea de jos a hărții.
+]
+
 == #slide-title("Hărți rezultate — Amazon", "Resulting Maps — Amazon")
 #map-slide(
   "figures/tbe_amazon_no_ekf_1.png",
   "figures/tbe_amazon_ekf_1.png",
 )
+
+#speaker-note[
+   Nu în ultimul rând, rezultatele pentru cea de a treia hartă, unde se pot observa din nou performanțe bune în cazul ambelor variante, cu ceva mai multe artefacte în cazul configurării fără EKF. Structura pereților este mai solidă în cazul celei de-a doua configurații, păstrând integritatea unghiulară a acestora mai bine.
+]
 
 // ------------------------------------------------------------
 //  Conclusions and Key Results
@@ -415,11 +447,11 @@
 
 == #slide-title("Concluzii", "Conclusions")
 
-- Sistem SLAM bidemensional bazat pe scan matching.
+- Sistem SLAM bidimensional bazat pe scan matching.
 
 - Integrare EKF pentru predicția inițială.
 
-- Erori < 0.1% din lungimea traiectoriei.
+- Erori < 0.1%.
 
 - Hărți fidele.
 
@@ -428,19 +460,22 @@
 - Impact EKF vizibil la calitatea structurală a hărților.
 
 #speaker-note[
-  In conclusion, this thesis presents a novel hardware accelerator design for symmetric cryptographic functions on RISC-V, which achieves significant improvements in performance and security compared to existing solutions. The key contributions include the design of a custom instruction set extension, the implementation of a hardware module for accelerating specific functions, and the development of a software library for interfacing with the hardware. The results demonstrate that our solution can significantly enhance the performance of cryptographic applications while maintaining security against side-channel attacks, thus advancing the state of the art in hardware accelerators for RISC-V.
+  În concluzie, a fost realizat un sistem de SLAM bidimensional bazat pe scan matching care se folosește de LiDAR, IMU și encoderele roților pentru a estima poziția și a cartografia mediul.
+  S-au înregistrat erori mai mici de 0.1%, iar hărțile generate reprezintă mediul într-o manieră fidelă.
+  EKF-ul nu are un impact prea mare la estimarea traiectoriei, însă integrarea acestuia aduce beneficii clare cu privire la calitatea hărților produse.
 ]
 
 == #slide-title("Lucrări viitoare", "Future Work")
 
-- Componentă de închiderea buclelor.
+- Componentă de închidere a buclelor.
 
 - Paralelizarea componentelor.
 
 - Optimizarea în continuare a procesului.
 
 #speaker-note[
-  While this thesis makes significant contributions to the design of hardware accelerators for symmetric cryptographic functions on RISC-V, there are some limitations that can be addressed in future work. For example, the current implementation focuses on a specific set of cryptographic functions, and future research could explore extending the accelerator to support a wider range of functions or algorithms. Additionally, further optimization techniques could be investigated to enhance performance and reduce power consumption even further. 
+  Pe viitor se poate dezvolta o componentă de detecție și închidere a buclelor, ceea ce presupune trecerea la o abordare tip optimizarea grafurilor, caz în care trebuie studiat impactul pe care îl va avea cea de a doua etapă de scan matching din arhitectura curentă.
+  Pentru performanțe mai bune se va urmări optimizarea procesului (folosirea algoritmului lui Bresenham poate fi vectorizată de exemplu) și paralelizarea componentelor (scan matching).
 ]
 
 // ------------------------------------------------------------
@@ -470,7 +505,7 @@
 
 - Scan-matching în două etape:
   - Etapa 1: corespondență max. 0.2 m, max. 15 iterații; respins dacă $Delta_"translație"$ > 0.2 m sau $Delta_"unghi"$ > ~5°.
-  - Etapa 2 : corespondență max. 0.1 m, max. 10 iterații; respins dacă $Delta_"translație"$ > > 0.1 m sau $Delta_"unghi"$ > ~3°.
+  - Etapa 2: corespondență max. 0.1 m, max. 10 iterații; respins dacă $Delta_"translație"$ > 0.1 m sau $Delta_"unghi"$ > ~3°.
 - Occupancy grid *log-odds*: +0.2 (ocupat), −0.1 (liber), trunchiat în $[-6, 6]$.
 - Vizualizare: $p > 70%$ → ocupat, $p < 20%$ → liber, restul → necunoscut.
 
